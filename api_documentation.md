@@ -5,6 +5,7 @@ Cikent-Server Architecture
 
 - Frontend: Svelte
 - Backend: Node.js (Express)
+- Database: PostgreSQL
 
 
 # API Documentation
