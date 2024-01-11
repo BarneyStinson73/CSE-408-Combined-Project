@@ -1,5 +1,5 @@
 # Architecture
-
+Cikent-Server Architecture
 
 # Stack
 
@@ -28,20 +28,45 @@
 }
 ```
 
-##### Response Body
+##### Response Body(Success)
 
 ```json
 {
-    "access_token": "123",
-    "refresh_token": "123"
+    "access_token": "123"
 }
 ```
+
+`NOTE`: This access token is to be used for all subsequent requests to the API. A user can only be logged in to one account at a time. If a user logs in to another account, the previous access token will be invalidated.
+
+| API Endpoint              | HTTP Method | Response Code |
+| ------------------------- | :---------: | :-----------: |
+| [/user/login]() |             `POST`    |      401      |
+|                           |             |               |
+
+##### Request Body
+
+```json
+{
+  "email": "string",
+  "password": "string"
+  "type": "string"
+}
+```
+
+##### Response Body(Failure)
+
+```json
+{
+    "message": "Invalid Credentials"
+}
+```
+
 
 ### `GET` Logout
 
 | API Endpoint               | HTTP Method | Response Code |
 | -------------------------- | :---------: | :-----------: |
-| [victor.com/logout]()      |    `GET`    |      200      |
+| [/logout]()      |    `GET`    |      200      |
 |                            |             |               |
 
 ##### Request Body
@@ -56,11 +81,42 @@
 
 ```
 
+
+
+### `GET` Notifications
+
+| API Endpoint               | HTTP Method | Response Code |
+| -------------------------- | :---------: | :-----------: |
+| [/notifications]()      |    `GET`    |      200      |
+|                            |             |               |
+
+##### Request Body
+
+```json
+
+```
+
+##### Response Body
+
+```json
+[
+  {
+    "notification_id": "string",
+    "notification": "string",
+    "notification_type": "string",
+    "notification_date": "string",
+    "notification_time": "string",
+    "notification_status": "string"
+  }
+]
+```
+
+
 ### `POST` Search Collaborators(User)
 
 | API Endpoint               | HTTP Method | Response Code |
 | -------------------------- | :---------: | :-----------: |
-| [api/user/search]()      |    `GET`    |      200      |
+| [api/user/search]()      |    `POST`    |      200      |
 |                            |             |               |
 
 ##### Request Body
@@ -75,20 +131,20 @@
 ##### Response Body
 
 ```json
-{
 [
+  {  
   "name" : "string",
   "position":"string"
-  
+  }
 ]
-}
+
 ```
 
 ### `GET` Personal Account Details on Search(User)
 
 | API Endpoint          | HTTP Method | Response Code |
 | --------------------- | :---------: | :-----------: |
-| [api/user/search/account/{account_id}]() |    `GET`    |      200      |
+| [api/user/search/account]() |    `GET`    |      200      |
 
 ##### Request Body
 
@@ -136,7 +192,7 @@
 
 | API Endpoint          | HTTP Method | Response Code |
 | --------------------- | :---------: | :-----------: |
-| [api/user/account/{account_id}]() |    `GET`    |      200      |
+| [api/user/account]() |    `GET`    |      200      |
 |                       |             |               |
 
 ##### Request Body
@@ -189,7 +245,7 @@
 
 | API Endpoint    | HTTP Method | Response Code |
 | --------------------- | :---------: | :-----------: |
-| [api/user/account/{account_id}/update]() |    `POST`    |      200      |
+| [api/user/account/update]() |    `POST`    |      200      |
 |                       |             |               |
 
 ##### Request Body
@@ -378,20 +434,20 @@
 ##### Response Body
 
 ```json
-{
 [
+  {  
   "name" : "string",
   "position":"string"
-  "account_id": "string"
+  
+  }
 ]
-}
 ```
 
 ### `GET` Personal Account Details on Search(Admin)
 
 | API Endpoint          | HTTP Method | Response Code |
 | --------------------- | :---------: | :-----------: |
-| [admin/search/account/{account_id}]() |    `GET`    |      200      |
+| [admin/search/account]() |    `GET`    |      200      |
 
 ##### Request Body
 
@@ -442,7 +498,7 @@
 
 | API Endpoint          | HTTP Method | Response Code |
 | --------------------- | :---------: | :-----------: |
-| [api/admin/account/{account_id}]() |    `GET`    |      200      |
+| [api/admin/account]() |    `GET`    |      200      |
 |                       |             |               |
 
 ##### Request Body
@@ -495,7 +551,7 @@
 
 | API Endpoint    | HTTP Method | Response Code |
 | --------------------- | :---------: | :-----------: |
-| [api/admin/account/{account_id}/update]() |    `POST`    |      200      |
+| [api/admin/account/update]() |    `POST`    |      200      |
 |                       |             |               |
 
 ##### Request Body
@@ -604,9 +660,17 @@
       "account_id": "string"
     }
   ],
+  "special_privileged_collaborators":[
+    {
+      "name": "string",
+      "account_id": "string"
+    }
+  ]
   "status": "success"
 }
 ```
+
+
 
 ### `POST` Update Project Details(Admin)
 
@@ -622,6 +686,9 @@
   "project_name": "string",
   "manager": "string",
   "collaborators": [
+    "name":"string"
+  ],
+  "special_privileged_collaborators": [
     "name":"string"
   ],
   "status": "string",
@@ -790,7 +857,7 @@
 ```
 
 
-### `Get` Task & Sub-task Details(User)
+### `Get` Task & Sub-task Details(Admin)
 
 | API Endpoint          | HTTP Method | Response Code |
 | --------------------- | :---------: | :-----------: |
@@ -880,3 +947,55 @@
   "status": "success"
 }
 ```
+
+### `GET` Gantt Chart(Admin)
+
+| API Endpoint    | HTTP Method | Response Code |
+| --------------------- | :---------: | :-----------: |
+| [api/admin/project/{project_id}/gantt]() |    `GET`    |      200      |
+|                       |             |               |
+
+##### Request Body
+
+```json
+
+```
+
+##### Response Body
+
+```json
+{
+  "project_id": "string",
+  "project_name": "string",
+  "tasks": [
+    {
+      "task_id": "string",
+      "task_name": "string",
+      "assigned_to": "string",
+      "assigned_by": "string",
+    }
+  ]
+  "sub-task": [
+    {
+      "sub-task_id": "string",
+      "sub-task_name": "string",
+      "sub-task_status": "string",
+      "start_date": "string",
+      "end_date": "string",
+      "progress": "string",
+      "assigned_to": "string",
+      "assigned_by": "string",
+      "dependencies": [
+        {
+          "sub-task_id": "string",
+          "sub-task_name": "string",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+  "cycle_start": "string",
+  "cycle_end": "string",
+}
+```
+`NOTE`: Gantt Chart will be available to only Scrum Master and Project Manager. The cycle start and end dates are the start and end dates of the project. The Gantt chart will be generated for the entire duration of the project.
