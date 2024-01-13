@@ -3,7 +3,7 @@ Cikent-Server Architecture
 
 # Stack
 
-- Frontend: Svelte
+- Frontend: React
 - Backend: Node.js (Express)
 - Database: PostgreSQL
 
