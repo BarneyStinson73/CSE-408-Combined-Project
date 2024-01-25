@@ -1,7 +1,11 @@
 <script>
 	// import 'workingcarousel.svelte';
-  // import { Carousel } from 'flowbite-svelte';
+  // import { Carousel, GradientButton } from 'flowbite-svelte';
   import Workingcarousel from './workingcarousel.svelte';
+  import Overlay from './Overlay.svelte';
+  
+  import {GradientButton} from 'flowbite-svelte';
+
 
   const images = [
     {
@@ -23,7 +27,14 @@
   ];
 </script>
 
-<div class="max-w-4xl">
+<div class="h-screen">
   
-  <Workingcarousel {images} Duration = {2000} />
+  <Workingcarousel {images} duration = {2000} />
+</div>
+<div class="max-w-4xl">
+  <!-- Your existing homepage content -->
+
+  <!-- Include the Overlay component to overlay on top -->
+  <Overlay />
+  
 </div>
