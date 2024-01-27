@@ -26,6 +26,10 @@
 </Card> -->
 <script>
   import { Card, Button, Label, Input, Checkbox,TextPlaceholder,Textarea } from 'flowbite-svelte';
+  import {  ButtonGroup, InputAddon, ToolbarButton } from 'flowbite-svelte';
+  import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
+  let show = false;
+  let show1 = false;
 </script>
 
 <!-- <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
@@ -60,10 +64,16 @@
       <span>Email</span>
       <Input type="email" name="email" placeholder="name@admin.com" required />
     </Label>
-    <Label class="space-y-2">
-      <span>Your password</span>
-      <Input type="password" name="password" placeholder="•••••••" required />
-    </Label>
+    <Label for="show-password" class="mb-2">Your password</Label>
+  <Input id="show-password" type={show ? 'text' : 'password'} placeholder="Your password here" size="lg">
+    <button slot="left" on:click={() => (show = !show)} class="pointer-events-auto">
+      {#if show}
+        <EyeOutline class="w-6 h-6" />
+      {:else}
+        <EyeSlashOutline class="w-6 h-6" />
+      {/if}
+    </button>
+  </Input>
     <div class="flex items-start">
       <a href="/" class="ms-auto text-sm text-primary-700 hover:underline dark:text-primary-500"> Forgot password? </a>
     </div>
@@ -77,4 +87,9 @@
   <div class="flex flex-row w-full">
     <img src="./static/login.jpg" alt="pp"/>
   </div>
+</div>
+
+
+<div>
+  
 </div>
