@@ -30,13 +30,26 @@ import { BreadcrumbItem} from 'flowbite-svelte';
 
 <div class="w-1/2 m-auto h-screen grid grid-cols-1 items-center">
 <form class="bg-blue-100 px-10 h-3/4 rounded">
-  <h1 class="text-center">New Project</h1>
+  <h1 class="text-center">New Task</h1>
+  <br>
+  <Breadcrumb aria-label="Default breadcrumb example">
+  <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
+  <BreadcrumbItem href="/">Projects</BreadcrumbItem>
+  <BreadcrumbItem>Project 1</BreadcrumbItem>
+</Breadcrumb>
+
+
+
   <div class="my-6">
-    <Label for="email" class="mb-2">Project Name</Label>
-    <Input type="email" id="email" placeholder="Sample Project" required />
+    <Label for="email" class="mb-2">Task Name</Label>
+    <Input type="text" id="name" placeholder="Sample Task" required />
   </div>
   <div class="my-6">
-    <Label>Project Manager
+    <Label for="email" class="mb-2">Task Description</Label>
+    <Input type="email" id="email" placeholder="To do something"  />
+  </div>
+  <div class="my-6">
+    <Label>Task Manager
   <Select class="mt-2" items={managers} bind:value={selected_manager} />
 </Label>
   </div>
@@ -49,12 +62,6 @@ import { BreadcrumbItem} from 'flowbite-svelte';
   <div class="mb-6">
     <Label for="last_name" class="mb-2">Collaborators</Label>
     <MultiSelect items={collaborators} bind:value={selected_collaborator} />
-    <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
-    <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
-  </div>
-  <div class="mb-6">
-    <Label for="last_name" class="mb-2">Special Collaborators</Label>
-    <MultiSelect items={sp_collaborators} bind:value={selected_sp_collaborator} />
     <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
     <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
   </div>
