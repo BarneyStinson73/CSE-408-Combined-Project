@@ -59,8 +59,8 @@ import { Progressbar } from 'flowbite-svelte';
   }
 </style>
 
-
-<Card padding="md" class="flex flex-col" color="rgb(255,255,255)">
+<div class="flex flex-row h-full">
+<Card padding="md" class="flex flex-col h-full" color="rgb(255,255,255)">
   
   <div class="flex flex-col items-center pb-4">
     <img src="profile.jpg" class="w-64 h-64 rounded-full" alt="bonnie"/>
@@ -130,3 +130,4 @@ import { Progressbar } from 'flowbite-svelte';
     Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
   </Button>
 </Card>
+</div>
