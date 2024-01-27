@@ -27,6 +27,7 @@
 <script>
   import { Card, Button, Label, Input, Checkbox,TextPlaceholder,Textarea } from 'flowbite-svelte';
 </script>
+
 <!-- <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
   <div class="absolute inset-0 bg-[url(/img/grid.svg)] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
   <Card>
@@ -49,13 +50,11 @@
     </form>
   </Card>
 </div> -->
-<div class="relative flex  w-2/5 min-h-screen flex-col justify-center bg-gray-50">
+<div class="flex  w-screen min-h-screen flex-row ">
   <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
   <!-- <div class="relative bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5  sm:max-w-lg sm:rounded-lg sm:px-10"> -->
-
-
-  <Card class="flex flex-col h-screen max-w-1/2 justify-center">
-  <form class="flex flex-col space-y-6 pt-10 w-3/4" action="/">
+  <Card class="flex h-screen  w-full ">
+  <form class="flex flex-col space-y-6 pt-10 w-full m-auto" action="/">
     <h3 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
     <Label class="space-y-2">
       <span>Email</span>
@@ -75,6 +74,7 @@
   </form>
 </Card>
   <!-- </div> -->
+  <div class="flex flex-row w-full">
+    <img src="./static/login.jpg" alt="pp"/>
+  </div>
 </div>
-
-<div class="relative flex w-3/5 min-h-screen flex-col justify-center bg-green-50"></div>

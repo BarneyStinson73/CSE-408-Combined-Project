@@ -60,16 +60,16 @@ import { Progressbar } from 'flowbite-svelte';
 </style>
 
 <div class="flex flex-row h-full">
-<Card padding="md" class="flex flex-col h-full" color="rgb(255,255,255)">
+<!-- <Card padding="md" class="flex flex-col h-full" color="rgb(255,255,255)"> -->
   
-  <div class="flex flex-col items-center pb-4">
+  <div class="flex flex-col items-center pb-4 space-y-5 m-auto">
     <img src="profile.jpg" class="w-64 h-64 rounded-full" alt="bonnie"/>
     <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">Bonnie Green</h5>
     <span class="text-sm text-gray-500 dark:text-gray-400">Visual Designer</span>
     <div class="flex mt-4 space-x-3 rtl:space-x-reverse lg:mt-6">
     </div>
   </div>
-</Card>
+<!-- </Card> -->
 
 
 
@@ -120,7 +120,7 @@ import { Progressbar } from 'flowbite-svelte';
 
 
 
-<Card>
+<Card class="w-full h-2/3 m-auto">
   <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Project 1</h5>
   <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:15 February 2024</p>
 
