@@ -1,6 +1,6 @@
 <script>
   import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
-  import { ChartPieSolid, GridSolid, MailBoxSolid, UserSolid, BagSolid, ArrowRightToBracketSolid, FileEditSolid, FireSolid, BookSolid, WindowRestoreOutline, LifeBuoySolid } from 'flowbite-svelte-icons';
+  import { ChartPieSolid, GridSolid, MailBoxSolid, UserSolid, BagSolid, ArrowRightToBracketSolid, FileEditSolid, FireSolid, BookSolid, WindowRestoreOutline, LifeBuoySolid, CirclePlusSolid } from 'flowbite-svelte-icons';
   import { Card, Dropdown, DropdownItem, Avatar, Button } from 'flowbite-svelte';
   import { DotsHorizontalOutline } from 'flowbite-svelte-icons';
   import { ArrowRightOutline } from 'flowbite-svelte-icons';
@@ -40,14 +40,6 @@ import { Progressbar } from 'flowbite-svelte';
   </NavUl>
 </Navbar>
 
-
-<style>
-  .propic {
-    background-color: rgba(255, 255, 255, 0.5); /* Set the alpha value between 0 (completely transparent) and 1 (completely opaque) */
-    /* You can also set other styles as needed */
-  }
-</style>
-
 <div class="flex flex-row h-full w-screen mx-auto">
 <!-- <Card padding="md" class="flex flex-col h-full" color="rgb(255,255,255)"> -->
   
@@ -58,12 +50,13 @@ import { Progressbar } from 'flowbite-svelte';
     <div class="flex mt-4 space-x-3 rtl:space-x-reverse lg:mt-6">
     </div>
   </div>
+  
 <!-- </Card> -->
 
 
 
 
-<div class="grid grid-cols-3 gap-2 flex-grow">
+<div class="grid grid-cols-4 gap-2 flex-grow">
 <Card class="w-full h-1/2 m-auto">
   <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Project 1</h5>
   <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:31 January 2024</p>
@@ -99,8 +92,25 @@ import { Progressbar } from 'flowbite-svelte';
     Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
   </Button>
  </Card>
+
+
+
+<Card class="w-full h-1/2 m-auto bg-transparent shadow-none">
+  <!-- <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Create New Project</h5> -->
+  <!-- <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:25 February 2024</p>
+
+  <Progressbar progress="20" size="h-4" labelInside style="background-color: lime"/>
+  <br>
+  <Button class="w-fit" style="background-color: green">
+    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
+  </Button> -->
+
+  <CirclePlusSolid class="w-20 h-20 m-auto text-gray-500 dark:text-gray-400" />
+ </Card>
 </div>
 </div>
+
+
 
 
 
