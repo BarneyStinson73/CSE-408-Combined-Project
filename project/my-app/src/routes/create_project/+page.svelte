@@ -1,6 +1,7 @@
 <script>
   import { Input, Label, Helper, Button, Checkbox, A } from 'flowbite-svelte';
 import { Select } from 'flowbite-svelte';
+import { MultiSelect } from 'flowbite-svelte';
 import { Datepicker } from 'flowbite-svelte';
   let selected=[''];
 
@@ -30,6 +31,14 @@ start end progress state tag
 </Label>
   </div>
   <div class="mb-6">
+    <Label for="last_name" class="mb-2">Collaborators</Label>
+    <MultiSelect items={countries} bind:value={selected} />
+    <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
+    <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
+  </div>
+  <div class="mb-6">
+    <Label for="last_name" class="mb-2">Special Collaborators</Label>
+    <MultiSelect items={countries} bind:value={selected} />
     <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
     <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
   </div>
