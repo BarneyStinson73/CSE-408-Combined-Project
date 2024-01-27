@@ -10,6 +10,8 @@
   import { SearchOutline } from 'flowbite-svelte-icons';
 
 import { Progressbar } from 'flowbite-svelte';
+
+  import { AccordionItem, Accordion } from 'flowbite-svelte';
 </script>
 <!-- <img src="profile.jpg" alt="sample 1" class="w-64 h-64 rounded-full" /> -->
 
@@ -46,10 +48,10 @@ import { Progressbar } from 'flowbite-svelte';
   }
 </style>
 
-<div class="flex flex-row h-full">
+<div class="flex flex-row h-full w-screen mx-auto">
 <!-- <Card padding="md" class="flex flex-col h-full" color="rgb(255,255,255)"> -->
   
-  <div class="flex flex-col items-center pb-4 space-y-5 m-auto">
+  <div class="flex flex-col items-center pb-4 space-y-5 mx-auto pt-10 w-1/4">
     <img src="profile.jpg" class="w-64 h-64 rounded-full" alt="bonnie"/>
     <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">Bonnie Green</h5>
     <span class="text-sm text-gray-500 dark:text-gray-400">Visual Designer</span>
@@ -61,9 +63,22 @@ import { Progressbar } from 'flowbite-svelte';
 
 
 
-
-<Card class="w-full h-2/3 m-auto">
+<div class="grid grid-cols-3 gap-2 flex-grow">
+<Card class="w-full h-1/2 m-auto">
   <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Project 1</h5>
+  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:31 January 2024</p>
+
+  <Progressbar progress="70" size="h-4" labelInside style="background-color: lime"/>
+  <br>
+  <Button class="w-fit" style="background-color: green">
+    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
+  </Button>
+</Card>
+
+
+
+<Card class="w-full h-1/2 m-auto">
+  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Project 2</h5>
   <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:15 February 2024</p>
 
   <Progressbar progress="50" size="h-4" labelInside style="background-color: lime"/>
@@ -72,4 +87,33 @@ import { Progressbar } from 'flowbite-svelte';
     Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
   </Button>
 </Card>
+
+
+<Card class="w-full h-1/2 m-auto">
+  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Project 3</h5>
+  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:25 February 2024</p>
+
+  <Progressbar progress="20" size="h-4" labelInside style="background-color: lime"/>
+  <br>
+  <Button class="w-fit" style="background-color: green">
+    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
+  </Button>
+ </Card>
+</div>
+</div>
+
+
+
+<div class="flex flex-col w-3/4 m-auto">
+<h1 class="font-bold text-red-500">Reminders</h1>
+<Accordion flush >
+  <AccordionItem>
+    <span slot="header" class="font-semibold">Hurry up!!!</span>
+    <p class="mb-2 text-gray-500 dark:text-gray-400">Project 1 has only 4 days left.</p>
+  </AccordionItem>
+  <AccordionItem>
+    <span slot="header" class="font-semibold">Task updated.</span>
+    <p class="mb-2 text-gray-500 dark:text-gray-400">Project 3 has multiple task details updated.</p>
+  </AccordionItem>
+</Accordion>
 </div>
