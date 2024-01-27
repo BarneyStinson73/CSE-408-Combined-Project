@@ -46,8 +46,8 @@
       <img src="logo-no-background.svg" alt="logo" class="w-90 py-12 ps-20"/>
   </div>
      <div class="button-container">
-      <GradientButton class="m-5" color="lime">Sign Up</GradientButton>
-      <GradientButton class="m-5" color="lime">Log In</GradientButton>
+      <GradientButton class="m-5" color="lime"><a href="/register">Sign Up</a></GradientButton>
+      <GradientButton class="m-5" color="lime"><a href="/login">Log in</a></GradientButton>
   </div>
   <!-- Plan. Execute. Mesmerize. -->
 </div>

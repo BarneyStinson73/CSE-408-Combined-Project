@@ -49,13 +49,13 @@
     </form>
   </Card>
 </div> -->
-<div class="relative flex min-h-screen flex-col justify-center bg-gray-50">
+<div class="relative flex  w-2/5 min-h-screen flex-col justify-center bg-gray-50">
   <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
   <!-- <div class="relative bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5  sm:max-w-lg sm:rounded-lg sm:px-10"> -->
 
 
-  <Card class="flex flex-col m-auto w-1/2">
-  <form class="flex flex-col space-y-6" action="/">
+  <Card class="flex flex-col h-screen max-w-1/2 justify-center">
+  <form class="flex flex-col space-y-6 pt-10 w-3/4" action="/">
     <h3 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
     <Label class="space-y-2">
       <span>Email</span>
@@ -63,16 +63,18 @@
     </Label>
     <Label class="space-y-2">
       <span>Your password</span>
-      <Input type="password" name="password" placeholder="•••••" required />
+      <Input type="password" name="password" placeholder="•••••••" required />
     </Label>
     <div class="flex items-start">
       <a href="/" class="ms-auto text-sm text-primary-700 hover:underline dark:text-primary-500"> Forgot password? </a>
     </div>
     <Button type="submit" class="w-full">Login to your account</Button>
     <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-      Not registered? <a href="/" class="text-primary-700 hover:underline dark:text-primary-500"> Create account </a>
+      Not registered? <a href="/register" class="text-primary-700 hover:underline dark:text-primary-500"> Create account </a>
     </div>
   </form>
 </Card>
   <!-- </div> -->
 </div>
+
+<div class="relative flex w-3/5 min-h-screen flex-col justify-center bg-green-50"></div>

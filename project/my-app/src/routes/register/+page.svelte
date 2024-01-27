@@ -1,9 +1,10 @@
 <script>
-  import { Input, Label, Helper, Button, Checkbox, A, Dropdown, DropdownItem } from 'flowbite-svelte'; 
+  import { Input, Label, Helper, Button, Checkbox, A, Dropdown, DropdownItem, GradientButton } from 'flowbite-svelte'; 
 </script>
 <div class="h-screen pt-20 m-auto  bg-cover bg-contain" style="background-image: url(./static/login.jpg)">
-  <div class="bg-white w-1/2 h-1/2 m-auto px-10">
-<form class="w-2/3 h-1/2 m-auto"> 
+  <div class="bg-white w-1/2 m-auto pb-10 pt-10 rounded">
+<h1 class="text-3xl text-center mb-6">Register</h1>
+<form class="w-3/4 h-1/2 m-auto"> 
   <div class="grid gap-6 mb-6 md:grid-cols-2">
     <div>
       <Label for="first_name" class="mb-2">First name</Label>
