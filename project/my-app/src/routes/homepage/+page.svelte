@@ -4,6 +4,8 @@
   import { Card, Dropdown, DropdownItem, Avatar, Button } from 'flowbite-svelte';
   import { DotsHorizontalOutline } from 'flowbite-svelte-icons';
   import { ArrowRightOutline } from 'flowbite-svelte-icons';
+  import { Modal } from 'flowbite-svelte';
+  let defaultModal = false;
   let spanClass = 'flex-1 ms-3 whitespace-nowrap';
 
   import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Input } from 'flowbite-svelte';
@@ -63,11 +65,52 @@ import { Progressbar } from 'flowbite-svelte';
 
   <Progressbar progress="70" size="h-4" labelInside style="background-color: lime"/>
   <br>
+  <!-- <Button class="w-fit" style="background-color: green">
+    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
+  </Button> -->
+
+  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
+
+</Card>
+
+<Modal title="Tasks" bind:open={defaultModal} autoclose  outsideclose>
+  <div class="grid grid-cols-2 gap-4">
+  <Card class="w-full m-auto">
+  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Flow Diagram</h5>
+  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline: 28 January 2024</p>
+
+  <Progressbar progress="90" size="h-4" labelInside style="background-color: lime"/>
+  <br>
   <Button class="w-fit" style="background-color: green">
     Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
   </Button>
 </Card>
 
+<Card class="w-full m-auto">
+  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Collaboration Diagram</h5>
+  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:31 January 2024</p>
+
+  <Progressbar progress="50" size="h-4" labelInside style="background-color: lime"/>
+  <br>
+  <Button class="w-fit" style="background-color: green">
+    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
+  </Button>
+</Card>
+
+<Card class="w-full m-auto">
+  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Mock UI</h5>
+  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:20 January 2024</p>
+
+  <Progressbar progress="100" size="h-4" labelInside style="background-color: lime"/>
+  <br>
+  <Button class="w-fit" style="background-color: green">
+    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
+  </Button>
+</Card>
+
+</div>
+  
+</Modal>
 
 
 <Card class="w-full h-1/2 m-auto">
@@ -76,7 +119,7 @@ import { Progressbar } from 'flowbite-svelte';
 
   <Progressbar progress="50" size="h-4" labelInside style="background-color: lime"/>
   <br>
-  <Button class="w-fit" style="background-color: green">
+  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>
     Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
   </Button>
 </Card>
@@ -88,7 +131,7 @@ import { Progressbar } from 'flowbite-svelte';
 
   <Progressbar progress="20" size="h-4" labelInside style="background-color: lime"/>
   <br>
-  <Button class="w-fit" style="background-color: green">
+  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>
     Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
   </Button>
  </Card>

@@ -38,3 +38,11 @@
   <Overlay />
   
 </div>
+
+<svelte:head >
+  <style>
+    body{
+      Overflow-x: hidden;
+    }
+  </style>
+</svelte:head>

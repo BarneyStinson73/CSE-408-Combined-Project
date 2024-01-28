@@ -65,15 +65,7 @@
       <Input type="email" name="email" placeholder="name@admin.com" required />
     </Label>
     <Label for="show-password" class="mb-2">Your password</Label>
-  <Input id="show-password" type={show ? 'text' : 'password'} placeholder="Your password here" size="lg">
-    <button slot="left" on:click={() => (show = !show)} class="pointer-events-auto">
-      {#if show}
-        <EyeOutline class="w-6 h-6" />
-      {:else}
-        <EyeSlashOutline class="w-6 h-6" />
-      {/if}
-    </button>
-  </Input>
+  <Input id="show-password" type={show ? 'text' : 'password'} placeholder="Your password here" size="lg"/>
     <div class="flex items-start">
       <a href="/" class="ms-auto text-sm text-primary-700 hover:underline dark:text-primary-500"> Forgot password? </a>
     </div>
