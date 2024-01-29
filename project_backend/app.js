@@ -6,11 +6,12 @@ const cors = require("cors");
 const router = express.Router();
 
 const managerRouter = require("./manager.js");
-
+const projects_router = require("./projects.js");
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
 app.use("/manager", managerRouter);
+app.use("/projects", projects_router);
 
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
