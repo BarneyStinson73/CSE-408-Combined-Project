@@ -4,6 +4,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const router = express.Router();
+const crypto = require("crypto");
 
 const managerRouter = require("./manager.js");
 const projects_router = require("./projects.js");
@@ -12,17 +13,46 @@ app.use(cors({ origin: "*" }));
 
 app.use("/manager", managerRouter);
 app.use("/projects", projects_router);
-
+function sha256(message) {
+    const hash = crypto.createHash("sha256");
+    hash.update(message);
+    return hash.digest("hex");
+}
 app.post("/login", async (req, res) => {
-    const { username, password } = req.body;
+    console.log(req.body);
+    let { username, password } = req.body;
+    password = sha256(password);
+    console.log(password);
+    console.log(username);
     try {
         const user = await db.any(
-            `SELECT * FROM "users" WHERE "username" = $1 AND "password" = $2`,
+            `SELECT * FROM "User" WHERE "userName" = $1 AND "password" = $2`,
             [username, password]
         );
         // res.json(user);
+        console.log(user);
+        console.log(user[0].userId);
         let response = {
             message: "Login successful",
+            data: user[0],
+        };
+        res.status(200).json(response);
+    } catch (err) {
+        console.log(err);
+        res.status(401).json({ message: "Invalid credentials" });
+    }
+});
+app.post("/register", async (req, res) => {
+    let { username, password, email, contact, position, type } = req.body;
+    password = sha256(password);
+    try {
+        const user = await db.any(
+            `INSERT INTO "User" ("userName", "password","email","contactNo","position","type") VALUES ($1, $2,$3,$4,$5,$6) RETURNING "userId"`,
+            [username, password, email, contact, position, type]
+        );
+        // res.json(user);
+        let response = {
+            message: "Registration successful",
             data: user,
         };
         res.status(200).json(response);
