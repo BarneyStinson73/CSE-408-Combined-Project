@@ -3,6 +3,7 @@
   import { Card, Button, Label, Input, Checkbox,TextPlaceholder,Textarea } from 'flowbite-svelte';
   import {  ButtonGroup, InputAddon, ToolbarButton } from 'flowbite-svelte';
   import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
+  import {token} from '$lib/token.js';
   let show = false;
   let show1 = false;
   let username = '';
@@ -19,6 +20,7 @@
 
     if (res.ok) {
       const data = await res.json();
+      token.set(data.token);
       console.log(data);
     }
   }

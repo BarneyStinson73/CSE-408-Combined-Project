@@ -5,14 +5,46 @@ const app = express();
 const cors = require("cors");
 const router = express.Router();
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWT;
+
+function verifyToken(req, res, next) {
+    const bearerHeader = req.headers["authorization"];
+    if(!bearerHeader){
+        return res.status(403).json({message:"No token provided"});
+    }
+    try{
+        const decoded = jwt.verify(bearerHeader, jwtSecret);
+        req.user = decoded;
+        const currentTime = Math.floor(Date.now()/1000);
+        if(decoded.exp < currentTime){
+            return res.status(403).json({message:"Token expired"});
+        }
+        next();
+    }
+    catch(err){
+        console.log(err);
+        return res.status(403).json({message:"Invalid token"});
+    }
+}
+function generateToken(user){
+    const token = jwt.sign(user, jwtSecret, {expiresIn: "24h"});
+    return token;
+}
+function checkAccountType(type){
+    return function(req, res, next){
+        if(req.user.type !== type){
+            return res.status(403).json({message:"Unauthorized"});
+        }
+        next();
+    }
+}
 
 const managerRouter = require("./manager.js");
 const projects_router = require("./projects.js");
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
-app.use("/manager", managerRouter);
-app.use("/projects", projects_router);
 function sha256(message) {
     const hash = crypto.createHash("sha256");
     hash.update(message);
@@ -32,8 +64,10 @@ app.post("/login", async (req, res) => {
         // res.json(user);
         console.log(user);
         console.log(user[0].userId);
+        const token = generateToken({userId: user[0].userId, type: user[0].type});
         let response = {
             message: "Login successful",
+            token: token,
             data: user[0],
         };
         res.status(200).json(response);
@@ -60,6 +94,10 @@ app.post("/register", async (req, res) => {
         console.log(err);
     }
 });
+
+
+app.use("/manager", verifyToken, checkAccountType("admin"),managerRouter);
+app.use("/projects", verifyToken, projects_router);
 // const http = require("http");
 // const fs = require("fs");
 
