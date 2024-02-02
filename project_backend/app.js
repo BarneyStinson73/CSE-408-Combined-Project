@@ -16,6 +16,7 @@ function verifyToken(req, res, next) {
     try{
         const decoded = jwt.verify(bearerHeader, jwtSecret);
         req.user = decoded;
+        // console.log(decoded);
         const currentTime = Math.floor(Date.now()/1000);
         if(decoded.exp < currentTime){
             return res.status(403).json({message:"Token expired"});
@@ -51,19 +52,19 @@ function sha256(message) {
     return hash.digest("hex");
 }
 app.post("/login", async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     let { username, password } = req.body;
     password = sha256(password);
-    console.log(password);
-    console.log(username);
+    // console.log(password);
+    // console.log(username);
     try {
         const user = await db.any(
             `SELECT * FROM "User" WHERE "userName" = $1 AND "password" = $2`,
             [username, password]
         );
         // res.json(user);
-        console.log(user);
-        console.log(user[0].userId);
+        // console.log(user);
+        // console.log(user[0].userId);
         const token = generateToken({userId: user[0].userId, type: user[0].type});
         let response = {
             message: "Login successful",
