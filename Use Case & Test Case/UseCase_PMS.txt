@@ -1,0 +1,264 @@
+[
+  {
+    "usecase": {
+      "name": "Create New Project",
+      "scenario": "Project Manager wants to create a new project in the project management tool.",
+      "actors": "Project Manager",
+      "preconditions": "Project Manager is logged in to the system.",
+      "steps": [
+        "Project Manager provides project details",
+        "Project Manager submits the project creation form"
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid Project Creation",
+        "description": "Verify that a user can successfully create a new project with valid details.",
+        "input": {
+          "projectDetails": {
+            "name": "New Project",
+            "startDate": "2024-02-01",
+            "deadline": "2024-03-01"
+          }
+        },
+        "expected": {
+          "outcome": "Project created successfully",
+          "status": "Created"
+        }
+      },
+      {
+        "name": "Incomplete Project Details",
+        "description": "Verify that the system handles incomplete project details during creation.",
+        "input": {
+          "projectDetails": {
+            "name": "Incomplete Project",
+            "startDate": "2024-02-01"
+          }
+        },
+        "expected": {
+          "outcome": "Project creation failed",
+          "status": "Incomplete"
+        }
+      },
+      {
+        "name": "Duplicate Project Name",
+        "description": "Verify that the system handles the case where a project with the same name already exists.",
+        "input": {
+          "projectDetails": {
+            "name": "Existing Project",
+            "startDate": "2024-02-01",
+            "deadline": "2024-03-01"
+          }
+        },
+        "expected": {
+          "outcome": "Project creation failed",
+          "status": "DuplicateName"
+        }
+      }
+    ]
+  },
+  {
+    "usecase": {
+      "name": "Create Tasks for an project",
+      "scenario": "Admin creates tasks ",
+      "actors": "Admin",
+      "preconditions": "Admin is logged in and has access to the project.",
+      "steps": [
+        "Admin creates tasks with details",
+        "Admin assigns tasks to team members"
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Create Tasks Successfully",
+        "description": "Verify that an Admin can successfully create tasks for a project",
+        "input": {
+          "tasks": [
+            {"name": "Task1" , "startDate":"10-12-2020" , "deadline":"10-12-2022"}
+            {"name": "Task2" , "startDate":"20-12-2020" , "deadline":"20-12-2022"}
+          ]
+        },
+        "expected": {
+          "outcome": "Tasks created successfully",
+          "status": "Created" , 
+        }
+      },
+      {
+        "name": "Incomplete Task Details",
+        "description": "Verify that the system handles incomplete task details during creation.",
+        "input": {
+          "tasks": [
+            { "name": "IncompleteTask", "startDate":"10-12-2020" }
+          ]
+        },
+        "expected": {
+          "outcome": "Task creation failed",
+          "status": "Incomplete"
+        }
+      },
+      {
+        "name": "Creating Task for non Existing Project",
+        "description": "Verify that the system handles assigning task to a non existent Project.",
+        "input": {
+          "tasks": [
+            { "name": "Task1", "startDate":"10-12-2020" , "deadline":"10-12-2022" }
+          ]
+        },
+        "expected": {
+          "outcome": "Task creation failed",
+          "status": "NonExistingProject"
+        }
+      },
+      
+    ]
+  },
+  {
+    "usecase": {
+      "name": "Add Team Members to a Task",
+      "scenario": "Admin wants to add team members to an existing Task.",
+      "actors": "Admin",
+      "preconditions": "Admin is logged in and has access to the Task.",
+      "steps": [
+        "Admin selects team members to add",
+        "Admin submits the team member addition form"
+      ]
+    },
+    "testcases": [
+      {
+        "name": "Valid Team Member Addition",
+        "description": "Verify that an Admin can successfully add team members to a task.",
+        "input": {
+          "teamMembers": ["User123", "User456"]
+        },
+        "expected": {
+          "outcome": "Team members added successfully",
+          "status": "Added" ,
+          "notification" : "Notification sent to users to whom the task is assigned"
+        }
+      },
+      {
+        "name": "Adding Nonexistent User",
+        "description": "Verify that the system handles adding a nonexistent user to the task.",
+        "input": {
+          "teamMembers": ["NonexistentUser"]
+        },
+        "expected": {
+          "outcome": "Team member addition failed",
+          "status": "NonexistentUser"
+        }
+      },
+      {
+        "name": "User Already in task",
+        "description": "Verify that the system handles adding a team member who is already part of the task.",
+        "input": {
+          "teamMembers": ["User123"]
+        },
+        "expected": {
+          "outcome": "Team member addition failed",
+          "status": "AlreadyInTask"
+        }
+      },
+    ]
+  },
+  {
+    "usecase": {
+      "name": "Track Project Progress",
+      "scenario": "Monitor and track the progress of tasks within a project.",
+      "actors": "Project Manager",
+      "preconditions": "Project manager is logged in and has access to the project.",
+      "steps": [
+        "Project manager accesses the project dashboard and gantt chart"
+      ]
+    },
+    "testcases": [
+      {
+        "name": "View Project Progress and Gantt Chart",
+        "description": "Verify that a project manager can successfully view the progress of tasks within a project.",
+        "input": {},
+        "expected": {
+          "outcome": "Project progress viewed successfully",
+          "status": "Viewed"
+        }
+      },
+      {
+        "name": "Access Unauthorized Project",
+        "description": "Verify that the system restricts access to project progress for unauthorized users.",
+        "input": {},
+        "expected": {
+          "outcome": "Project progress view failed",
+          "status": "UnauthorizedAccess"
+        }
+      }
+    ]
+   }
+   {
+    "usecase": {
+      "name": "Track Task Progress",
+      "scenario": "Monitor and track the progress of subtasks within a task.",
+      "actors": "Admin",
+      "preconditions": "Admin is logged in and has access to the task.",
+      "steps": [
+        "Admin accesses the task dashboard"
+      ]
+    },
+    "testcases": [
+      {
+        "name": "View Task Progress",
+        "description": "Verify that an admin can successfully view the progress of subtasks within a task.",
+        "input": {},
+        "expected": {
+          "outcome": "Task progress viewed successfully",
+          "status": "Viewed"
+        }
+      },
+      {
+        "name": "Access Unauthorized Task",
+        "description": "Verify that the system restricts access to task progress for unauthorized users.",
+        "input": {},
+        "expected": {
+          "outcome": "Task progress view failed",
+          "status": "UnauthorizedAccess"
+        }
+      }
+    ]
+   }
+   {
+        "usecase": {
+            "name": "Task Completion",
+            "scenario": "A team member completes a task assigned to them.",
+            "actors": "Team Member",
+            "preconditions": "Team member is logged into the system and has been assigned tasks.",
+            "steps": [
+                "Team member selects a task assigned to them.",
+                "Team member marks the task as completed."
+            ]
+        },
+        "testcases": [
+            {
+                "name": "Valid Task Completion",
+                "description": "Verify that a team member can successfully mark a task as completed.",
+                "input": {
+                    "task_id": "12345"
+                },
+                "expected": {
+                    "outcome": "Task marked as completed successfully",
+                    "status": "Completed" , 
+                    "notification" : "Notification sent to users involved in the task"
+                }
+            },
+            {
+                "name": "Incomplete Task Completion",
+                "description": "Verify that the system handles the case where a team member tries to mark an incomplete task as completed.",
+                "input": {
+                    "task_id": "54321"
+                },
+                "expected": {
+                    "outcome": "Task completion failed",
+                    "status": "Not Completed" 
+                    
+                }
+            }
+        ]
+    }
+
+]
