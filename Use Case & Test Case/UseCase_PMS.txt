@@ -65,7 +65,7 @@
       "preconditions": "Admin is logged in and has access to the project.",
       "steps": [
         "Admin creates tasks with details",
-        "Admin assigns tasks to team members"
+        "Admin submits the task creation form"
       ]
     },
     "testcases": [
@@ -73,6 +73,7 @@
         "name": "Create Tasks Successfully",
         "description": "Verify that an Admin can successfully create tasks for a project",
         "input": {
+          "project" : "name",
           "tasks": [
             {"name": "Task1" , "startDate":"10-12-2020" , "deadline":"10-12-2022"}
             {"name": "Task2" , "startDate":"20-12-2020" , "deadline":"20-12-2022"}
@@ -87,6 +88,7 @@
         "name": "Incomplete Task Details",
         "description": "Verify that the system handles incomplete task details during creation.",
         "input": {
+          "project" : "name",
           "tasks": [
             { "name": "IncompleteTask", "startDate":"10-12-2020" }
           ]
@@ -100,6 +102,7 @@
         "name": "Creating Task for non Existing Project",
         "description": "Verify that the system handles assigning task to a non existent Project.",
         "input": {
+          "project" : "name",
           "tasks": [
             { "name": "Task1", "startDate":"10-12-2020" , "deadline":"10-12-2022" }
           ]
@@ -109,7 +112,22 @@
           "status": "NonExistingProject"
         }
       },
-      
+     {
+        "name": "Duplicate Task Name",
+        "description": "Verify that the system handles the case where a task with the same name in the project already exists.",
+        "input": {
+          "project" : "name",
+          "taskDetails": {
+            "name": "Existing Task",
+            "startDate": "2024-02-01",
+            "deadline": "2024-03-01"
+          }
+        },
+        "expected": {
+          "outcome": "Task creation failed",
+          "status": "DuplicateName"
+        }
+      } 
     ]
   },
   {
@@ -128,6 +146,7 @@
         "name": "Valid Team Member Addition",
         "description": "Verify that an Admin can successfully add team members to a task.",
         "input": {
+          "task" : "name",
           "teamMembers": ["User123", "User456"]
         },
         "expected": {
@@ -140,6 +159,7 @@
         "name": "Adding Nonexistent User",
         "description": "Verify that the system handles adding a nonexistent user to the task.",
         "input": {
+          "task" : "name",
           "teamMembers": ["NonexistentUser"]
         },
         "expected": {
@@ -151,6 +171,7 @@
         "name": "User Already in task",
         "description": "Verify that the system handles adding a team member who is already part of the task.",
         "input": {
+          "task" : "name",
           "teamMembers": ["User123"]
         },
         "expected": {
