@@ -43,6 +43,8 @@ function checkAccountType(type){
 
 const managerRouter = require("./manager.js");
 const projects_router = require("./projects.js");
+const user_router = require("./user.js");
+const task_router = require("./task.js");
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
@@ -99,6 +101,7 @@ app.post("/register", async (req, res) => {
 
 app.use("/manager", verifyToken, checkAccountType("admin"),managerRouter);
 app.use("/projects", verifyToken, projects_router);
+// app.use("/user", verifyToken,checkAccountType("user"), user_router);
 // const http = require("http");
 // const fs = require("fs");
 
