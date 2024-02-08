@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { as } = require("pg-promise");
 const db = require("./db.js");
 
 router.route("/profile").post((req, res) => {
@@ -72,6 +73,83 @@ router.route("/project_creation_form").post((req, res) => {
         .catch((err) => {
             console.log(err);
         });
+});
+
+router.route("/create_project").post(async (req, res) => {
+    let { project_name, project_manager, project_tags, project_users,start_date,deadline } = req.body;
+    
+    let data = await db.any(`INSERT INTO "Project" ("projectName","startTime","deadline") VALUES ($1, $2, $3) returning "projectId"`,
+        [project_name, start_date, deadline]);
+    await db.any(`INSERT INTO "ProjectManager" ("projectId","userId") VALUES ($1, $2)`,
+        [data[0].projectId, project_manager]);
+    project_tags.forEach(async (tag) => {
+        await db.any(`INSERT INTO "ProjectTag" ("projectId","tagId") VALUES ($1, $2)`,
+            [data[0].projectId, tag]);
+    });
+    project_users.forEach(async (user) => {
+        await db.any(`INSERT INTO "ProjectUser" ("projectId","userId") VALUES ($1, $2)`,
+            [data[0].projectId, user]);
+    });
+    let response = {
+        message: "Project created successfully",
+        data: data,
+    };
+    res.status(200).json(response);
+});
+
+router.route("/task_creation_form").post(async (req, res) => {
+    await db.any(`SELECT * FROM "User" WHERE "type" = 'admin'`),
+    await db.any(`SELECT * FROM "Tags"`),
+    await db.any(`SELECT * FROM "User" WHERE "type" <> 'admin'`)
+        .then(([managers,tags,users]) => {
+            let response = {
+                message: "Task created successfully",
+                managers: managers,
+                tags: tags,
+                users: users
+            };
+            res.status(200).json(response);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
+router.route("/create_task").post(async (req, res) => {
+    let {
+        project_name,
+        project_manager,
+        project_tags,
+        project_users,
+        start_date,
+        deadline,
+    } = req.body;
+
+    let data = await db.any(
+        `INSERT INTO "Task" ("taskName","startTime","deadline") VALUES ($1, $2, $3) returning "projectId"`,
+        [project_name, start_date, deadline]
+    );
+    await db.any(
+        `INSERT INTO "ProjectManager" ("projectId","userId") VALUES ($1, $2)`,
+        [data[0].projectId, project_manager]
+    );
+    project_tags.forEach(async (tag) => {
+        await db.any(
+            `INSERT INTO "ProjectTag" ("projectId","tagId") VALUES ($1, $2)`,
+            [data[0].projectId, tag]
+        );
+    });
+    project_users.forEach(async (user) => {
+        await db.any(
+            `INSERT INTO "ProjectUser" ("projectId","userId") VALUES ($1, $2)`,
+            [data[0].projectId, user]
+        );
+    });
+    let response = {
+        message: "Project created successfully",
+        data: data,
+    };
+    res.status(200).json(response);
 });
 
 

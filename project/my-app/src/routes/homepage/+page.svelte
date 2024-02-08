@@ -1,9 +1,9 @@
 <script>
   import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
-  import { ChartPieSolid, GridSolid, MailBoxSolid, UserSolid, BagSolid, ArrowRightToBracketSolid, FileEditSolid, FireSolid, BookSolid, WindowRestoreOutline, LifeBuoySolid, CirclePlusSolid } from 'flowbite-svelte-icons';
+  // import { ChartPieSolid, GridSolid, MailBoxSolid, UserSolid, BagSolid, ArrowRightToBracketSolid, FileEditSolid, FireSolid, BookSolid, WindowRestoreOutline, LifeBuoySolid, CirclePlusSolid } from 'flowbite-svelte-icons';
   import { Card, Dropdown, DropdownItem, Avatar, Button } from 'flowbite-svelte';
   import { DotsHorizontalOutline } from 'flowbite-svelte-icons';
-  import { ArrowRightOutline } from 'flowbite-svelte-icons';
+  import { ArrowRightOutline ,CirclePlusSolid} from 'flowbite-svelte-icons';
   import { Modal } from 'flowbite-svelte';
   let defaultModal = false;
   let spanClass = 'flex-1 ms-3 whitespace-nowrap';
