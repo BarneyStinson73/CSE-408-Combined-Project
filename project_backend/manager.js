@@ -52,6 +52,29 @@ router.route("/update_profile").post((req, res) => {
             console.log(err);
         });
 });
+
+router.route("/project_creation_form").post((req, res) => {
+    Promise.all([
+    db.any(`SELECT * FROM "User" WHERE "type" = 'admin'`),
+    db.any(`SELECT * FROM "Tags"`),
+    db.any(`SELECT * FROM "User" WHERE "type" <> 'admin'`)
+    ])
+
+        .then(([managers,tags,users]) => {
+            let response = {
+                message: "Project created successfully",
+                managers: managers,
+                tags: tags,
+                users: users
+            };
+            res.status(200).json(response);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
+
 router.route("/projects/tasks").post((req, res) => {
     let {project_id} = req.body;
     console.log(project_id);

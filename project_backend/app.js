@@ -65,7 +65,7 @@ app.post("/login", async (req, res) => {
             [username, password]
         );
         // res.json(user);
-        // console.log(user);
+        console.log(user);
         // console.log(user[0].userId);
         const token = generateToken({userId: user[0].userId, type: user[0].type});
         let response = {
