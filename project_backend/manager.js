@@ -52,8 +52,9 @@ router.route("/update_profile").post((req, res) => {
             console.log(err);
         });
 });
-router.route("/projects/tasks").get((req, res) => {
-    let project_id = req.body;
+router.route("/projects/tasks").post((req, res) => {
+    let {project_id} = req.body;
+    console.log(project_id);
     db.any(`SELECT * FROM "ProjectTask" WHERE "projectId" = $1`, [project_id])
         .then((data) => {
             let response = {
@@ -66,5 +67,7 @@ router.route("/projects/tasks").get((req, res) => {
             console.log(err);
         });
 });
+
+// if else statement to check if the project or task we are trying to access has its leaf flag set to true
 
 module.exports = router;
