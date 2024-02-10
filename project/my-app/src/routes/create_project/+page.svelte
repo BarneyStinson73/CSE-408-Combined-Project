@@ -1,8 +1,14 @@
 <script>
+  import {page} from '$app/stores';
   import { Input, Label, Helper, Button, Checkbox, A } from 'flowbite-svelte';
 import { Select } from 'flowbite-svelte';
 import { MultiSelect } from 'flowbite-svelte';
 import { Datepicker } from 'flowbite-svelte';
+
+
+  
+  let data= $page.data;
+
   let selected_manager=[''],selected_collaborator=[''],selected_sp_collaborator=[''],selected_tag=[''];
 
   let managers = [

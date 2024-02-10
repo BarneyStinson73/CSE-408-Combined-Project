@@ -50,10 +50,11 @@ router.route("/profile").post(async (req, res) => {
 router.route("/update_profile").post((req, res) => {
     let id = req.user["userId"];
 
-    let { username, email, password } = req.body;
+    let { username, email } = req.body;
+    // password=sha256(password);
     db.any(
-        `UPDATE "User" SET "userName" = $1, "email" = $2, "password" = $3 WHERE "userId" = $4`,
-        [username, email, password, id]
+        `UPDATE "User" SET "userName" = $1, "email" = $2 WHERE "userId" = $3`,
+        [username, email, id]
     )
         .then((data) => {
             let response = {
@@ -71,13 +72,14 @@ router.route("/update_password").post((req, res) => {
     let id = req.user["userId"];
 
     let { prev_password, new_password } = req.body;
+    new_password=sha256(new_password);
     db.any(`UPDATE "User" SET "password" = $1 WHERE "userId" = $2`, [
         new_password,
         id,
     ])
         .then((data) => {
             let response = {
-                message: "User profile updated successfully",
+                message: "User password updated successfully",
                 data: data,
             };
             res.status(200).json(response);
@@ -151,15 +153,15 @@ router.route("/task_creation_form").post(async (req, res) => {
     // await db.any(`SELECT * FROM "User" WHERE "type" = 'admin'`),
     // await db.any(`SELECT * FROM "Tags"`),
     // await db.any(`SELECT * FROM "User" WHERE "type" <> 'admin'`)
-    let { parent_project_user_list } = await db.any(
+    let  parent_project_user_list  = await db.any(
         `SELECT "userId" from "ProjectUser" where projectId='$1'`,
         [project_id]
     );
-    let { task_managers } = await db.any(
+    let task_managers  = await db.any(
         `SELECT "userId" FROM "ProjectUser" WHERE "projectId" = $1`,
         [project_id]
     );
-    let { tags } = await db.any(
+    let  tags  = await db.any(
         `SELECT "taskId" FROM "ProjectTag" WHERE "projectId" = $1`,
         [project_id]
     );
