@@ -99,10 +99,13 @@
             
             <div class='mr-20'>
             <Card class="w-full m-auto">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{project.name}</h5>
-                <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:{project.deadline}</p>
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{project.projectName}</h5>
+                <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
+                  Deadline:
+                  {new Date(project.deadline).toLocaleTimeString([],{hour:"numeric",minute:"numeric"})+", "+new Date(project.deadline).toLocaleDateString([],{day:"numeric", month:"long",year:"numeric"})}
+                </p>
               
-                <Progressbar progress={project.progress} size="h-4" labelInside style="background-color: lime"/>
+                <Progressbar progress={project.progression} size="h-4" labelInside style="background-color: lime"/>
                 <br>
                 <Button class="w-fit" style="background-color: green">
                   Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
