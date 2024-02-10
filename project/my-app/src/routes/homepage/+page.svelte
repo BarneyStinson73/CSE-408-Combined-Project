@@ -1,4 +1,5 @@
 <script>
+  import {page} from '$app/stores';
   import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
   // import { ChartPieSolid, GridSolid, MailBoxSolid, UserSolid, BagSolid, ArrowRightToBracketSolid, FileEditSolid, FireSolid, BookSolid, WindowRestoreOutline, LifeBuoySolid, CirclePlusSolid } from 'flowbite-svelte-icons';
   import { Card, Dropdown, DropdownItem, Avatar, Button } from 'flowbite-svelte';
@@ -14,6 +15,9 @@
 import { Progressbar } from 'flowbite-svelte';
 
   import { AccordionItem, Accordion } from 'flowbite-svelte';
+
+
+  let data=$page.data;
 </script>
 <!-- <img src="profile.jpg" alt="sample 1" class="w-64 h-64 rounded-full" /> -->
 
