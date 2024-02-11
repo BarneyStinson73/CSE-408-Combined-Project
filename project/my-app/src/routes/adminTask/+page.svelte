@@ -1,20 +1,20 @@
 <script>
-import Comment from './Comment.svelte';
-import TaskGraph from './TaskGraph.svelte'
+    import Comment from './Comment.svelte';
+    import TaskGraph from './TaskGraph.svelte'
 </script>
-
-<div class = 'flex flex-row'>
-
-    <div class = 'basis-1/2'>
-        <TaskGraph />
+    
+    <div class = 'flex flex-row'>
+    
+        <div class = 'basis-1/4'>
+            <TaskGraph />
+        </div>
+    
+    
+    
+        <div class="basis-3/4">
+            <Comment />
+        </div>
+    
+    
+    
     </div>
-
-
-
-    <div class="basis-1/2">
-        <Comment />
-    </div>
-
-
-
-</div>
