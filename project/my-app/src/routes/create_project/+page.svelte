@@ -4,75 +4,104 @@
 import { Select } from 'flowbite-svelte';
 import { MultiSelect } from 'flowbite-svelte';
 import { Datepicker } from 'flowbite-svelte';
-
-
+import { get } from 'svelte/store';
+import { token } from '$lib/token.js';
   
   let data= $page.data;
+  console.log(data);
 
-  let selected_manager=[''],selected_collaborator=[''],selected_sp_collaborator=[''],selected_tag=[''];
+  let project_manager=[],project_users=[],project_special_users=[],project_tags=[];
 
-  let managers = [
-    { value: 'us', name: 'James Moreno' },
-    { value: 'ca', name: 'Eric Baena' },
-    { value: 'fr', name: 'Vicent DiAfrino' }
-  ];
-  let tags=[
-    { value: 'us', name: 'Java' },
-    { value: 'ca', name: 'Python' },
-    { value: 'fr', name: 'CPP' }
-  ];
-  let collaborators=[
-    { value: 'us', name: 'Alex Stanley' },
-    { value: 'ca', name: 'Roger Burb' },
-    { value: 'fr', name: 'Stuart Little' }
-  ];
-  let sp_collaborators=[
-    { value: 'us', name: 'Franc Sinatra' },
-    { value: 'ca', name: 'Hal Jordan' },
-    { value: 'fr', name: 'Richard Grayson' }
-  ];
+  // let managers = [
+  //   { value: 'us', name: 'James Moreno' },
+  //   { value: 'ca', name: 'Eric Baena' },
+  //   { value: 'fr', name: 'Vicent DiAfrino' }
+  // ];
+
+  // manager variable will hold all the users' names from the data
+  let project_name='',start_date='',deadline='';
+  let managers = $page.data.managers.map((manager)=>{
+    return {value:manager.userId, name:manager.userName}
+  });
+
+  // let managers = $page.data.managers.userName;
+  
+  // tags variable will hold all the tags from the data
+  let tags= $page.data.tags.map((tag)=>{
+    return {value:tag.tagId, name:tag.tagName}
+  });
+  let collaborators= $page.data.users.map((collaborator)=>{
+    return {value:collaborator.userId, name:collaborator.userName}
+  });
+  let sp_collaborators= $page.data.managers.map((sp_collaborator)=>{
+    return {value:sp_collaborator.userId, name:sp_collaborator.userName}
+  });
+
+
+  async function project_creation() {
+    console.log(project_name, project_manager, project_users,project_special_users,project_tags,start_date,deadline); 
+    const res = await fetch('http://localhost:3000/manager/create_project', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: get(token)
+
+      },
+      body: JSON.stringify({project_name, project_manager, project_users,project_special_users,project_tags,start_date,deadline })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      token.set(data.token);
+      console.log(data);
+      // console.log(data.success);
+      if(data.success){
+        alert('Project Created Successfully');
+      }
+    }
+  }
 </script>
 
 
 <div class="w-1/2 m-auto h-screen grid grid-cols-1 items-center">
-<form class="bg-blue-100 px-10 h-3/4 rounded">
+<form class="bg-blue-100 px-10 h-3/4 rounded" on:submit|preventDefault={project_creation}>
   <h1 class="text-center">New Project</h1>
   <div class="my-6">
     <Label for="email" class="mb-2">Project Name</Label>
-    <Input type="email" id="email" placeholder="Sample Project" required />
+    <Input type="text" id="text" placeholder="Sample Project" required bind:value={project_name}/>
   </div>
   <div class="my-6">
     <Label>Project Manager
-  <Select class="mt-2" items={managers} bind:value={selected_manager} />
+  <Select class="mt-2" items={managers} bind:value={project_manager} />
 </Label>
   </div>
   <div class="mb-6">
     <Label for="last_name" class="mb-2">Tags</Label>
-    <MultiSelect items={tags} bind:value={selected_tag} />
+    <MultiSelect items={tags} bind:value={project_tags} />
     <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
     <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
   </div>
   <div class="mb-6">
     <Label for="last_name" class="mb-2">Collaborators</Label>
-    <MultiSelect items={collaborators} bind:value={selected_collaborator} />
+    <MultiSelect items={collaborators} bind:value={project_users} />
     <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
     <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
   </div>
   <div class="mb-6">
     <Label for="last_name" class="mb-2">Special Collaborators</Label>
-    <MultiSelect items={sp_collaborators} bind:value={selected_sp_collaborator} />
+    <MultiSelect items={sp_collaborators} bind:value={project_special_users} />
     <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
     <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
   </div>
   <div class="grid gap-6 mb-6 md:grid-cols-2">
     <div>
       <Label for="last_name" class="mb-2">Start Date</Label>
-      <Input type="date" id="last_name" placeholder="Doe" required />
+      <Input type="date" id="last_name" placeholder="Doe" required bind:value={start_date}/>
       
     </div>
     <div>
       <Label for="last_name" class="mb-2">Expiration Date</Label>
-      <Input type="date" id="last_name" placeholder="Doe" required />
+      <Input type="date" id="last_name" placeholder="Doe" required bind:value={deadline}/>
     </div>
 
   </div>

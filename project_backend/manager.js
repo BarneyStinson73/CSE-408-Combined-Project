@@ -116,6 +116,7 @@ router.route("/create_project").post(async (req, res) => {
         project_manager,
         project_tags,
         project_users,
+        project_special_users,
         start_date,
         deadline,
     } = req.body;
@@ -140,9 +141,24 @@ router.route("/create_project").post(async (req, res) => {
             [data[0].projectId, user]
         );
     });
+    project_special_users.forEach(async (user) => {
+        await db.any(
+            `INSERT INTO "ProjectUser" ("projectId","userId") VALUES ($1, $2)`,
+            [data[0].projectId, user]
+        );
+    });
+
+    await db.any(
+        // insert start date and deadline into project table where project id =date[0].projectid
+        `UPDATE "Project" SET "startTime" = $1, "deadline" = $2 WHERE "projectId" = $3`,
+        [start_date, deadline, data[0].projectId]
+
+    );
+    
     let response = {
         message: "Project created successfully",
         data: data,
+        success: true,
     };
     res.status(200).json(response);
 });
