@@ -1,26 +1,46 @@
 <script>
   import { Input, Label, Helper, Button, Checkbox, A, Dropdown, DropdownItem, GradientButton } from 'flowbite-svelte'; 
+  let username = '', password = '', confirmPassword = '', email = '', contact = '', position = '';
+
+  import {token} from '$lib/token.js';
+  import {goto} from '$app/navigation';
+  async function register() {
+    const redirecturl='/';
+    const res = await fetch('http://localhost:3000/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password,email,contact,position })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      token.set(data.token);
+      console.log(data);
+      if(data.success){
+        alert('Registered successfully');
+        goto(redirecturl);
+      }
+    }
+  }
 </script>
 <div class="h-screen pt-20 m-auto  bg-cover bg-contain" style="background-image: url(./static/login.jpg)">
   <div class="bg-white w-1/2 m-auto pb-10 pt-10 rounded">
 <h1 class="text-3xl text-center mb-6">Register</h1>
-<form class="w-3/4 h-1/2 m-auto"> 
-  <div class="grid gap-6 mb-6 md:grid-cols-2">
+<form class="w-3/4 h-1/2 m-auto" on:submit|preventDefault={register}> 
+  <div class="grid gap-6 mb-6 ">
     <div>
-      <Label for="first_name" class="mb-2">First name</Label>
-      <Input type="text" id="first_name" placeholder="John" required />
-    </div>
-    <div>
-      <Label for="last_name" class="mb-2">Last name</Label>
-      <Input type="text" id="last_name" placeholder="Doe" required />
+      <Label for="user_name" class="mb-2">User name</Label>
+      <Input type="text" id="user_name" placeholder="John Doe" bind:value={username} required />
     </div>
     <div>
       <Label for="position" class="mb-2">Position</Label>
-      <Input type="text" id="company" placeholder="Developer" required />
+      <Input type="text" id="company" placeholder="Developer" bind:value={position} required />
     </div>
     <div>
       <Label for="phone" class="mb-2">Phone number</Label>
-      <Input type="tel" id="phone" placeholder="123-45-678" pattern={"[0-9]{3}-[0-9]{2}-[0-9]{3}"} required />
+      <Input type="tel" id="phone" placeholder="123-45-678" bind:value={contact} required />
     </div>
     <!-- <div>
       <Label for="website" class="mb-2">Website URL</Label>
@@ -33,15 +53,11 @@
   </div>
   <div class="mb-6">
     <Label for="email" class="mb-2">Email address</Label>
-    <Input type="email" id="email" placeholder="john.doe@company.com" required />
+    <Input type="email" id="email" placeholder="john.doe@company.com" bind:value={email} required />
   </div>
   <div class="mb-6">
     <Label for="password" class="mb-2">Password</Label>
-    <Input type="password" id="password" placeholder="•••••••••" required />
-  </div>
-  <div class="mb-6">
-    <Label for="confirm_password" class="mb-2">Confirm password</Label>
-    <Input type="password" id="confirm_password" placeholder="•••••••••" required />
+    <Input type="password" id="password" placeholder="•••••••••" bind:value={password} required />
   </div>
   <Checkbox class="mb-6 space-x-1 rtl:space-x-reverse" required>
     I agree with the <A href="/" class="text-primary-700 dark:text-primary-600 hover:underline">terms and conditions</A>.

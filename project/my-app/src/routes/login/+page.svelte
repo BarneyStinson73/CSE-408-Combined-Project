@@ -4,12 +4,15 @@
   import {  ButtonGroup, InputAddon, ToolbarButton } from 'flowbite-svelte';
   import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
   import {token} from '$lib/token.js';
+  import {get} from 'svelte/store';
+  import {goto} from '$app/navigation';
   let show = false;
   let show1 = false;
   let username = '';
   let password = '';
 
   async function login() {
+    const redirecturl='/profile';
     const res = await fetch('http://localhost:3000/login', {
       method: 'POST',
       headers: {
@@ -22,6 +25,9 @@
       const data = await res.json();
       token.set(data.token);
       console.log(data);
+      if(data.success){
+        goto(redirecturl);
+      }
     }
   }
 </script>

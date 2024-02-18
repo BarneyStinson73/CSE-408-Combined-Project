@@ -2,13 +2,36 @@
   import {page} from '$app/stores';
   import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
   // import { ChartPieSolid, GridSolid, MailBoxSolid, UserSolid, BagSolid, ArrowRightToBracketSolid, FileEditSolid, FireSolid, BookSolid, WindowRestoreOutline, LifeBuoySolid, CirclePlusSolid } from 'flowbite-svelte-icons';
-  import { Card, Dropdown, DropdownItem, Avatar, Button } from 'flowbite-svelte';
+  import { Card, Dropdown, DropdownItem, Avatar } from 'flowbite-svelte';
   import { DotsHorizontalOutline } from 'flowbite-svelte-icons';
   import { ArrowRightOutline ,CirclePlusSolid} from 'flowbite-svelte-icons';
-  import { Modal } from 'flowbite-svelte';
-  let defaultModal = false;
-  let spanClass = 'flex-1 ms-3 whitespace-nowrap';
+   import { Button, Modal, Label, Checkbox } from 'flowbite-svelte';
+   import { Select } from 'flowbite-svelte';
+    import { MultiSelect } from 'flowbite-svelte';
 
+  let managers = [
+    { value: 'us', name: 'James Moreno' },
+    { value: 'ca', name: 'Eric Baena' },
+    { value: 'fr', name: 'Vicent DiAfrino' }
+  ];
+  let tags = [
+    { value: 'us', name: 'Java' },
+    { value: 'ca', name: 'Python' },
+    { value: 'fr', name: 'CPP' }
+  ];
+  let collaborators = [
+    { value: 'us', name: 'Alex Stanley' },
+    { value: 'ca', name: 'Roger Burb' },
+    { value: 'fr', name: 'Stuart Little' }
+  ];
+  let selected_manager = [];
+  let selected_tag = [];
+  let selected_collaborator = [];
+  let selected_sp_collaborator = [];
+  let defaultModal = false;
+  let formModal = false;
+  let spanClass = 'flex-1 ms-3 whitespace-nowrap';
+  let task_name='',start_date='',deadline='';
   import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Input } from 'flowbite-svelte';
   import { SearchOutline } from 'flowbite-svelte-icons';
 
@@ -18,6 +41,8 @@ import { Progressbar } from 'flowbite-svelte';
 
 
   let data=$page.data;
+  async function task_creation(){
+  }
 </script>
 <!-- <img src="profile.jpg" alt="sample 1" class="w-64 h-64 rounded-full" /> -->
 
@@ -72,9 +97,62 @@ import { Progressbar } from 'flowbite-svelte';
   <!-- <Button class="w-fit" style="background-color: green">
     Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
   </Button> -->
-
+<div class="grid grid-cols-2 gap-4">
   <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
+<!-- 
+  <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button> -->
 
+  <Button on:click={() => (formModal = true)}>Create New</Button>
+
+<Modal bind:open={formModal} size="xs" autoclose={false} class="w-full">
+  <form class="bg-blue-100 px-10 h-3/4 rounded" on:submit|preventDefault={task_creation}>
+  <h1 class="text-center">New Task</h1>
+  <br>
+  <!-- <Breadcrumb aria-label="Default breadcrumb example">
+  <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
+  <BreadcrumbItem href="/">Projects</BreadcrumbItem>
+  <BreadcrumbItem>Project 1</BreadcrumbItem>
+</Breadcrumb> -->
+
+
+
+  <div class="my-6">
+    <Label for="email" class="mb-2">Task Name</Label>
+    <Input type="text" id="name" placeholder="Sample Task" required bind:value={task_name} />
+  </div>
+  <div class="my-6">
+    <Label>Task Manager
+  <Select class="mt-2" items={managers} bind:value={selected_manager} />
+</Label>
+  </div>
+  <div class="mb-6">
+    <Label for="last_name" class="mb-2">Tags</Label>
+    <MultiSelect items={tags} bind:value={selected_tag} />
+    <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
+    <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
+  </div>
+  <div class="mb-6">
+    <Label for="last_name" class="mb-2">Collaborators</Label>
+    <MultiSelect items={collaborators} bind:value={selected_collaborator} />
+    <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
+    <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
+  </div>
+  <div class="grid gap-6 mb-6 md:grid-cols-2">
+    <div>
+      <Label for="last_name" class="mb-2">Start Date</Label>
+      <Input type="date" id="last_name" placeholder="Doe" required bind:value={start_date}/>
+      
+    </div>
+    <div>
+      <Label for="last_name" class="mb-2">Expiration Date</Label>
+      <Input type="date" id="last_name" placeholder="Doe" required bind:value={deadline}/>
+    </div>
+
+  </div>
+  <Button type="submit">Submit</Button>
+</form>
+</Modal>
+</div>
 </Card>
 
 <Modal title="Tasks" bind:open={defaultModal} autoclose  outsideclose>
@@ -85,9 +163,11 @@ import { Progressbar } from 'flowbite-svelte';
 
   <Progressbar progress="90" size="h-4" labelInside style="background-color: lime"/>
   <br>
-  <Button class="w-fit" style="background-color: green">
-    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
-  </Button>
+  <div class="grid grid-cols-2 gap-4">
+  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
+
+  <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
+</div>
 </Card>
 
 <Card class="w-full m-auto">
@@ -96,9 +176,11 @@ import { Progressbar } from 'flowbite-svelte';
 
   <Progressbar progress="50" size="h-4" labelInside style="background-color: lime"/>
   <br>
-  <Button class="w-fit" style="background-color: green">
-    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
-  </Button>
+  <div class="grid grid-cols-2 gap-4">
+  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
+
+  <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
+</div>
 </Card>
 
 <Card class="w-full m-auto">
@@ -107,9 +189,11 @@ import { Progressbar } from 'flowbite-svelte';
 
   <Progressbar progress="100" size="h-4" labelInside style="background-color: lime"/>
   <br>
-  <Button class="w-fit" style="background-color: green">
-    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
-  </Button>
+<div class="grid grid-cols-2 gap-4">
+  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
+
+  <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
+</div>
 </Card>
 
 </div>
@@ -123,9 +207,11 @@ import { Progressbar } from 'flowbite-svelte';
 
   <Progressbar progress="50" size="h-4" labelInside style="background-color: lime"/>
   <br>
-  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>
-    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
-  </Button>
+<div class="grid grid-cols-2 gap-4">
+  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
+
+  <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
+</div>
 </Card>
 
 
@@ -135,9 +221,11 @@ import { Progressbar } from 'flowbite-svelte';
 
   <Progressbar progress="20" size="h-4" labelInside style="background-color: lime"/>
   <br>
-  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>
-    Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
-  </Button>
+<div class="grid grid-cols-2 gap-4">
+  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
+
+  <Button class="w-fit " style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
+</div>
  </Card>
 
 

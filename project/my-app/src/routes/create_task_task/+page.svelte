@@ -1,9 +1,12 @@
 <script>
+
   import {page} from '$app/stores';
-  import { Input, Label, Helper, Button, Checkbox, A } from 'flowbite-svelte';
+  import { Input, Label, Helper, Button, Checkbox, A, Breadcrumb } from 'flowbite-svelte';
 import { Select } from 'flowbite-svelte';
 import { MultiSelect } from 'flowbite-svelte';
-import { Datepicker } from 'flowbite-svelte';
+import { BreadcrumbItem} from 'flowbite-svelte';
+ import { Modal} from 'flowbite-svelte';
+  let formModal = false;
 import { get } from 'svelte/store';
 import { token } from '$lib/token.js';
   
@@ -19,7 +22,7 @@ import { token } from '$lib/token.js';
   // ];
 
   // manager variable will hold all the users' names from the data
-  let project_name='',start_date='',deadline='';
+  let task_name='',start_date='',deadline='';
   let managers = $page.data.managers.map((manager)=>{
     return {value:manager.userId, name:manager.userName}
   });
@@ -33,21 +36,46 @@ import { token } from '$lib/token.js';
   let collaborators= $page.data.users.map((collaborator)=>{
     return {value:collaborator.userId, name:collaborator.userName}
   });
-  let sp_collaborators= $page.data.managers.map((sp_collaborator)=>{
-    return {value:sp_collaborator.userId, name:sp_collaborator.userName}
-  });
+  // let sp_collaborators= $page.data.managers.map((sp_collaborator)=>{
+  //   return {value:sp_collaborator.userId, name:sp_collaborator.userName}
+  // });
 
 
-  async function project_creation() {
-    console.log(project_name, project_manager, project_users,project_special_users,project_tags,start_date,deadline); 
-    const res = await fetch('http://localhost:3000/manager/create_project', {
+
+  let selected_manager=[],selected_collaborator=[],selected_sp_collaborator=[],selected_tag=[];
+
+  // let managers = [
+  //   { value: 'us', name: 'James Moreno' },
+  //   { value: 'ca', name: 'Eric Baena' },
+  //   { value: 'fr', name: 'Vicent DiAfrino' }
+  // ];
+  // let tags=[
+  //   { value: 'us', name: 'Java' },
+  //   { value: 'ca', name: 'Python' },
+  //   { value: 'fr', name: 'CPP' }
+  // ];
+  // let collaborators=[
+  //   { value: 'us', name: 'Alex Stanley' },
+  //   { value: 'ca', name: 'Roger Burb' },
+  //   { value: 'fr', name: 'Stuart Little' }
+  // ];
+  // let sp_collaborators=[
+  //   { value: 'us', name: 'Franc Sinatra' },
+  //   { value: 'ca', name: 'Hal Jordan' },
+  //   { value: 'fr', name: 'Richard Grayson' }
+  // ];
+
+
+  async function task_creation() {
+    console.log(task_name, selected_manager, selected_collaborator,selected_tag,start_date,deadline); 
+    const res = await fetch('http://localhost:3000/manager/create_task', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         authorization: get(token)
 
       },
-      body: JSON.stringify({project_name, project_manager, project_users,project_special_users,project_tags,start_date,deadline })
+      body: JSON.stringify({task_name, selected_manager, selected_collaborator,selected_tag,start_date,deadline })
     });
 
     if (res.ok) {
@@ -56,7 +84,7 @@ import { token } from '$lib/token.js';
       console.log(data);
       // console.log(data.success);
       if(data.success){
-        alert('Project Created Successfully');
+        alert('Task Created Successfully');
       }
     }
   }
@@ -64,32 +92,35 @@ import { token } from '$lib/token.js';
 
 
 <div class="w-1/2 m-auto h-screen grid grid-cols-1 items-center">
-<form class="bg-blue-100 px-10 h-3/4 rounded" on:submit|preventDefault={project_creation}>
-  <h1 class="text-center">New Project</h1>
+<form class="bg-blue-100 px-10 h-3/4 rounded" on:submit|preventDefault={task_creation}>
+  <h1 class="text-center">New Task</h1>
+  <br>
+  <!-- <Breadcrumb aria-label="Default breadcrumb example">
+  <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
+  <BreadcrumbItem href="/">Projects</BreadcrumbItem>
+  <BreadcrumbItem>Project 1</BreadcrumbItem>
+</Breadcrumb> -->
+
+
+
   <div class="my-6">
-    <Label for="email" class="mb-2">Project Name</Label>
-    <Input type="text" id="text" placeholder="Sample Project" required bind:value={project_name}/>
+    <Label for="email" class="mb-2">Task Name</Label>
+    <Input type="text" id="name" placeholder="Sample Task" required bind:value={task_name} />
   </div>
   <div class="my-6">
-    <Label>Project Manager
-  <Select class="mt-2" items={managers} bind:value={project_manager} />
+    <Label>Task Manager
+  <Select class="mt-2" items={managers} bind:value={selected_manager} />
 </Label>
   </div>
   <div class="mb-6">
     <Label for="last_name" class="mb-2">Tags</Label>
-    <MultiSelect items={tags} bind:value={project_tags} />
+    <MultiSelect items={tags} bind:value={selected_tag} />
     <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
     <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
   </div>
   <div class="mb-6">
     <Label for="last_name" class="mb-2">Collaborators</Label>
-    <MultiSelect items={collaborators} bind:value={project_users} />
-    <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
-    <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
-  </div>
-  <div class="mb-6">
-    <Label for="last_name" class="mb-2">Special Collaborators</Label>
-    <MultiSelect items={sp_collaborators} bind:value={project_special_users} />
+    <MultiSelect items={collaborators} bind:value={selected_collaborator} />
     <!-- <Label for="confirm_password" class="mb-2">Confirm password</Label>
     <Input type="password" id="confirm_password" placeholder="•••••••••" required /> -->
   </div>

@@ -116,6 +116,7 @@ router.route("/create_project").post(async (req, res) => {
         project_manager,
         project_tags,
         project_users,
+        project_special_users,
         start_date,
         deadline,
     } = req.body;
@@ -140,14 +141,29 @@ router.route("/create_project").post(async (req, res) => {
             [data[0].projectId, user]
         );
     });
+    project_special_users.forEach(async (user) => {
+        await db.any(
+            `INSERT INTO "ProjectUser" ("projectId","userId") VALUES ($1, $2)`,
+            [data[0].projectId, user]
+        );
+    });
+
+    await db.any(
+        // insert start date and deadline into project table where project id =date[0].projectid
+        `UPDATE "Project" SET "startTime" = $1, "deadline" = $2 WHERE "projectId" = $3`,
+        [start_date, deadline, data[0].projectId]
+
+    );
+    
     let response = {
         message: "Project created successfully",
         data: data,
+        success: true,
     };
     res.status(200).json(response);
 });
 
-router.route("/task_creation_form").post(async (req, res) => {
+router.route("/task_creation_form_project").post(async (req, res) => {
     // let {parent_project_user_list} = req.body;
     let { project_id } = req.body;
     // await db.any(`SELECT * FROM "User" WHERE "type" = 'admin'`),
@@ -158,7 +174,7 @@ router.route("/task_creation_form").post(async (req, res) => {
         [project_id]
     );
     let task_managers  = await db.any(
-        `SELECT "userId" FROM "ProjectUser" WHERE "projectId" = $1`,
+        `SELECT "userId" FROM "ProjectUser" WHERE "projectId" = $1 AND "type" = 'admin'`,
         [project_id]
     );
     let  tags  = await db.any(
@@ -178,7 +194,7 @@ router.route("/task_creation_form").post(async (req, res) => {
     //     console.log(err);
     // });
     let response = {
-        message: "Task creation form sent successfully",
+        message: "Task creation form for project sent successfully",
         managers: task_managers,
         tags: tags,
         users: parent_project_user_list,
@@ -186,9 +202,67 @@ router.route("/task_creation_form").post(async (req, res) => {
     res.status(200).json(response);
 });
 
+router.route("/task_creation_form_task").post(async (req, res) => {
+    let { task_id } = req.body;
+    let task_managers = await db.any(
+        `SELECT * FROM "TaskManager" WHERE "taskId" = $1`,  [task_id]
+    );
+    let tags = await db.any(`SELECT * FROM "TaskTag" WHERE "taskId" = $1`, [task_id]);
+    let task_users = await db.any(
+        `SELECT * FROM "TaskEmployee" WHERE "taskId" = $1`, [task_id]
+    );
+    let response = {
+        message: "Task creation form for task sent successfully",
+        managers: task_managers,
+        tags: tags,
+        users: task_users,
+    };
+    res.status(200).json(response);
+}
+);
+
+
+
+router.route("/project/create_task").post(async (req, res) => {
+    let {
+        project_id,
+        task_name,
+        task_manager,
+        task_tags,
+        task_users,
+        start_date,
+        deadline,
+    } = req.body;
+
+    let data = await db.any(
+        `INSERT INTO "Task" ("taskName","startTime","deadline") VALUES ($1, $2, $3) returning "taskId"`,
+        [task_name, start_date, deadline]
+    );
+    await db.any(
+        `INSERT INTO "TaskManager" ("taskId","userId") VALUES ($1, $2)`,
+        [data[0].taskId, task_manager]
+    );
+    task_users.forEach(async (user) => {
+        await db.any(
+            `INSERT INTO "TaskEmployee" ("projectId","taskId","userId") VALUES ($1, $2,$3)`,
+            [project_id,data[0].taskId ,user]
+        );
+    });
+    task_tags.forEach(async(tag)=>{
+        await db.any(
+            `INSERT INTO "TaskTag" ("taskId","tagId") VALUES ($1, $2)`,[data[0].taskId,tag]
+        )
+    });
+    let response = {
+        message: "Task created successfully",
+        data: data,
+    };
+    res.status(200).json(response);
+});
+
 router.route("/task/create_task").post(async (req, res) => {
     let {
-        parent_id,
+        parent_task_id,
         task_name,
         task_manager,
         task_users,
