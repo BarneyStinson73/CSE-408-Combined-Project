@@ -72,6 +72,7 @@ app.post("/login", async (req, res) => {
             message: "Login successful",
             token: token,
             data: user[0],
+            success: true,
         };
         res.status(200).json(response);
     } catch (err) {
@@ -80,7 +81,8 @@ app.post("/login", async (req, res) => {
     }
 });
 app.post("/register", async (req, res) => {
-    let { username, password, email, contact, position, type } = req.body;
+    let { username, password, email, contact, position } = req.body;
+    let type = "user";
     password = sha256(password);
     try {
         const user = await db.any(

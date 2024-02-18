@@ -2,7 +2,7 @@ import { get } from 'svelte/store';
 import { token } from '$lib/token.js';
 export const ssr = false;
 export async function load() {
-	const res = await fetch('http://localhost:3000/manager/task_creation_form', {
+	const res = await fetch('http://localhost:3000/manager/task_creation_form_project', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
