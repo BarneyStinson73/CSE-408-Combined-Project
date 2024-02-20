@@ -1,4 +1,5 @@
 <script>
+	import { goto } from '$app/navigation';
   import {page} from '$app/stores';
   import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
   // import { ChartPieSolid, GridSolid, MailBoxSolid, UserSolid, BagSolid, ArrowRightToBracketSolid, FileEditSolid, FireSolid, BookSolid, WindowRestoreOutline, LifeBuoySolid, CirclePlusSolid } from 'flowbite-svelte-icons';
@@ -164,7 +165,10 @@ import { Progressbar } from 'flowbite-svelte';
   <Progressbar progress="90" size="h-4" labelInside style="background-color: lime"/>
   <br>
   <div class="grid grid-cols-2 gap-4">
-  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
+  <Button class="w-fit" style="background-color: green" on:click={(
+  ) => (defaultModal = true)}>Details</Button>
+
+  <a href="/tasks/2">Click here</a>
 
   <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
 </div>

@@ -46,7 +46,19 @@ router.route("/profile").post(async (req, res) => {
         console.log(err);
     }
 });
-
+router.route("/search").post(async (req, res) => {
+    let { search } = req.body;
+    let data = await db.any(
+        `SELECT * FROM "User" WHERE "userName" LIKE $1 OR "email" LIKE $1`,
+        [search]
+    );
+    let response = {
+        message: "Search results retrieved successfully",
+        data: data,
+    };
+    res.status(200).json(response);
+}
+);
 router.route("/update_profile").post((req, res) => {
     let id = req.user["userId"];
 
@@ -345,5 +357,8 @@ router.route("/project/task/details").post(async (req, res) => {
             console.log(err);
         });
 });
+
+
+// manager.use("/projects/tasks/kanban", verifyToken, checkAccountType("admin"), kanbanRouter);
 
 module.exports = router;
