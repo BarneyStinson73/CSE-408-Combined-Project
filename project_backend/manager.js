@@ -6,55 +6,129 @@ const kanbanRouter = require("./kanban.js");
 // app.use(express.json());
 // app.use(cors({ origin: "*" }));
 
-router.route("/profile").post(async (req, res) => {
-    let id = req.user["userId"];
+// router.route("/profile").post(async (req, res) => {
+//     let id = req.user["userId"];
 
-    let user_data = await db.any(`SELECT * FROM "User" WHERE "userId" = $1`, [
-        id,
-    ]);
-    let project_data = await db.any(
-        `
+//     let user_data = await db.any(`SELECT * FROM "User" WHERE "userId" = $1`, [
+//         id,
+//     ]);
+//     let project_data = await db.any(
+//         `
+//             SELECT
+//                 p."projectId",
+//                 p."progression",
+//                 p."projectName",
+//                 p."deadline",
+//                 ARRAY_AGG(u."userId") AS involvedUsers,
+//                 ARRAY_AGG(t."tagName") AS projectTags
+//             FROM
+//                 "Project" p
+//             JOIN
+//                 "ProjectUser" pu ON p."projectId" = pu."projectId"
+//             JOIN
+//                 "ProjectUser" u ON u."projectId" = p."projectId"
+//             JOIN
+//                 "ProjectTag" pt ON pt."projectId" = p."projectId"
+//             JOIN
+//                 "Tags" t ON t."tagId" = pt."tagId"
+//             WHERE
+//                 pu."userId" = $1
+//             GROUP BY
+//                 p."projectId", p."progression", p."projectName", p."deadline";
+//         `,
+//         [id]
+//     );
+//     try {
+//         let response = {
+//             message: "User profile retrieved successfully",
+//             // data: data,
+//             user_data: user_data,
+//             project_data: project_data,
+//         };
+//         console.log(response);
+//         res.status(200).json(response);
+//     } catch (err) {
+//         console.log(err);
+//     }
+// });
+
+router.route("/profile").post(async (req, res) => {
+    try {
+        let id = req.user["userId"];
+
+        // Retrieve user data
+        let user_data = await db.any(
+            `SELECT * FROM "User" WHERE "userId" = $1`,
+            [id]
+        );
+
+        // Retrieve project data along with associated tags and their counts
+        let project_data = await db.any(
+            `
             SELECT 
                 p."projectId",
                 p."progression",
                 p."projectName",
                 p."deadline",
-                ARRAY_AGG(u."userId") AS involvedUsers
+                ARRAY_AGG(u."userId") AS involvedUsers,
+                JSONB_OBJECT_AGG(tag_count.tn, tag_count.tagCount) AS tagCounts
             FROM 
                 "Project" p
             JOIN 
                 "ProjectUser" pu ON p."projectId" = pu."projectId"
             JOIN 
                 "ProjectUser" u ON u."projectId" = p."projectId"
+            LEFT JOIN (
+                SELECT 
+                    pt."projectId",
+                    "Tags"."tagName" AS tn,
+                    COUNT(*) AS tagCount
+                FROM 
+                    "ProjectTag" pt
+                JOIN 
+                    "Tags" ON pt."tagId" = "Tags"."tagId"
+                GROUP BY 
+                    pt."projectId", "Tags"."tagName"
+            ) AS tag_count ON tag_count."projectId" = p."projectId"
             WHERE 
                 pu."userId" = $1
             GROUP BY 
-                p."projectId", p."progression";
+                p."projectId", p."progression", p."projectName", p."deadline"
         `,
-        [id]
-    );
-    try {
+            [id]
+        );
+
+        // Extract tag data from the project data
+        let tag_data = project_data.map((project) => {
+            return {
+                projectId: project.projectId,
+                tagCounts: project.tagCounts,
+            };
+        });
+
         let response = {
             message: "User profile retrieved successfully",
-            // data: data,
             user_data: user_data,
             project_data: project_data,
+            tag_data: tag_data,
         };
+
         console.log(response);
         res.status(200).json(response);
     } catch (err) {
         console.log(err);
+        res.status(500).json({ message: "Error retrieving user profile" });
     }
 });
 
 router.route("/update_profile").post((req, res) => {
     let id = req.user["userId"];
 
-    let { username, email } = req.body;
+    let { username, email,contact } = req.body;
     // password=sha256(password);
     db.any(
-        `UPDATE "User" SET "userName" = $1, "email" = $2 WHERE "userId" = $3`,
-        [username, email, id]
+        `UPDATE "User" SET "userName" = $1, "email" = $2 ,"contactNo"=$3 WHERE "userId" = $4`,
+        [username, email,contact, id]
     )
         .then((data) => {
             let response = {
@@ -68,11 +142,23 @@ router.route("/update_profile").post((req, res) => {
         });
 });
 
-router.route("/update_password").post((req, res) => {
+router.route("/update_password").post(async(req, res) => {
     let id = req.user["userId"];
 
     let { prev_password, new_password } = req.body;
-    new_password=sha256(new_password);
+    new_password = sha256(new_password);
+    // check whether previous password is correct
+    let old_pass=await db.any(`SELECT * FROM "User" WHERE "userId" = $1`, [id]);
+    old_pass=old_pass[0].password;
+    prev_password=sha256(prev_password);
+    if(old_pass!=prev_password){
+        let response = {
+            message: "Previous password is incorrect",
+        };
+        res.status(200).json(response);
+        return;
+    }
+
     db.any(`UPDATE "User" SET "password" = $1 WHERE "userId" = $2`, [
         new_password,
         id,
@@ -152,9 +238,8 @@ router.route("/create_project").post(async (req, res) => {
         // insert start date and deadline into project table where project id =date[0].projectid
         `UPDATE "Project" SET "startTime" = $1, "deadline" = $2 WHERE "projectId" = $3`,
         [start_date, deadline, data[0].projectId]
-
     );
-    
+
     let response = {
         message: "Project created successfully",
         data: data,
@@ -169,15 +254,15 @@ router.route("/task_creation_form_project").post(async (req, res) => {
     // await db.any(`SELECT * FROM "User" WHERE "type" = 'admin'`),
     // await db.any(`SELECT * FROM "Tags"`),
     // await db.any(`SELECT * FROM "User" WHERE "type" <> 'admin'`)
-    let  parent_project_user_list  = await db.any(
+    let parent_project_user_list = await db.any(
         `SELECT "userId" from "ProjectUser" where projectId='$1'`,
         [project_id]
     );
-    let task_managers  = await db.any(
+    let task_managers = await db.any(
         `SELECT "userId" FROM "ProjectUser" WHERE "projectId" = $1 AND "type" = 'admin'`,
         [project_id]
     );
-    let  tags  = await db.any(
+    let tags = await db.any(
         `SELECT "taskId" FROM "ProjectTag" WHERE "projectId" = $1`,
         [project_id]
     );
@@ -205,11 +290,15 @@ router.route("/task_creation_form_project").post(async (req, res) => {
 router.route("/task_creation_form_task").post(async (req, res) => {
     let { task_id } = req.body;
     let task_managers = await db.any(
-        `SELECT * FROM "TaskManager" WHERE "taskId" = $1`,  [task_id]
+        `SELECT * FROM "TaskManager" WHERE "taskId" = $1`,
+        [task_id]
     );
-    let tags = await db.any(`SELECT * FROM "TaskTag" WHERE "taskId" = $1`, [task_id]);
+    let tags = await db.any(`SELECT * FROM "TaskTag" WHERE "taskId" = $1`, [
+        task_id,
+    ]);
     let task_users = await db.any(
-        `SELECT * FROM "TaskEmployee" WHERE "taskId" = $1`, [task_id]
+        `SELECT * FROM "TaskEmployee" WHERE "taskId" = $1`,
+        [task_id]
     );
     let response = {
         message: "Task creation form for task sent successfully",
@@ -218,10 +307,7 @@ router.route("/task_creation_form_task").post(async (req, res) => {
         users: task_users,
     };
     res.status(200).json(response);
-}
-);
-
-
+});
 
 router.route("/project/create_task").post(async (req, res) => {
     let {
@@ -245,13 +331,14 @@ router.route("/project/create_task").post(async (req, res) => {
     task_users.forEach(async (user) => {
         await db.any(
             `INSERT INTO "TaskEmployee" ("projectId","taskId","userId") VALUES ($1, $2,$3)`,
-            [project_id,data[0].taskId ,user]
+            [project_id, data[0].taskId, user]
         );
     });
-    task_tags.forEach(async(tag)=>{
+    task_tags.forEach(async (tag) => {
         await db.any(
-            `INSERT INTO "TaskTag" ("taskId","tagId") VALUES ($1, $2)`,[data[0].taskId,tag]
-        )
+            `INSERT INTO "TaskTag" ("taskId","tagId") VALUES ($1, $2)`,
+            [data[0].taskId, tag]
+        );
     });
     let response = {
         message: "Task created successfully",

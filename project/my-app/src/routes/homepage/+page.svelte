@@ -24,6 +24,16 @@
     { value: 'ca', name: 'Roger Burb' },
     { value: 'fr', name: 'Stuart Little' }
   ];
+  let tasks=[
+    {name:'Flow Diagram',deadline:'28 January 2024',progress:90},
+    {name:'Collaboration Diagram',deadline:'31 January 2024',progress:50},
+    {name:'Mock UI Hudai',deadline:'20 January 2024',progress:100}
+  ];
+  let tasks2=[
+    {name:'Flow Diagram',deadline:'28 January 2024',progress:90},
+    {name:'Collaboration Diagram',deadline:'31 January 2024',progress:50},
+  ];
+  let showing_tasks = tasks;
   let selected_manager = [];
   let selected_tag = [];
   let selected_collaborator = [];
@@ -155,48 +165,24 @@ import { Progressbar } from 'flowbite-svelte';
 </div>
 </Card>
 
-<Modal title="Tasks" bind:open={defaultModal} autoclose  outsideclose>
+
+
+<Modal title="Tasks" bind:open={defaultModal} autoclose={false}  outsideclose>
   <div class="grid grid-cols-2 gap-4">
-  <Card class="w-full m-auto">
-  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Flow Diagram</h5>
-  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline: 28 January 2024</p>
+    {#each showing_tasks as task}
+      <Card class="w-full m-auto">
+        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{task.name}</h5>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline: {task.deadline}</p>
 
-  <Progressbar progress="90" size="h-4" labelInside style="background-color: lime"/>
-  <br>
-  <div class="grid grid-cols-2 gap-4">
-  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
+        <Progressbar progress={task.progress} size="h-4" labelInside style="background-color: lime"/>
+        <br>
+        <div class="grid grid-cols-2 gap-4">
+        <Button class="w-fit" style="background-color: green" on:click={() => (showing_tasks=tasks2)}>Details</Button>
 
-  <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
-</div>
-</Card>
-
-<Card class="w-full m-auto">
-  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Collaboration Diagram</h5>
-  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:31 January 2024</p>
-
-  <Progressbar progress="50" size="h-4" labelInside style="background-color: lime"/>
-  <br>
-  <div class="grid grid-cols-2 gap-4">
-  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
-
-  <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
-</div>
-</Card>
-
-<Card class="w-full m-auto">
-  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Mock UI</h5>
-  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline:20 January 2024</p>
-
-  <Progressbar progress="100" size="h-4" labelInside style="background-color: lime"/>
-  <br>
-<div class="grid grid-cols-2 gap-4">
-  <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>Details</Button>
-
-  <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
-</div>
-</Card>
-
-</div>
+        <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
+        </div>
+      </Card>
+{/each}
   
 </Modal>
 

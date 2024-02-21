@@ -1,4 +1,5 @@
 <script>
+
     import { Navbar, NavBrand, NavLi, NavUl, NavHamburger ,  Input , Search } from 'flowbite-svelte'
     import {Button, Dropdown, DropdownItem } from 'flowbite-svelte';
     import { ChevronDownSolid , SearchOutline } from 'flowbite-svelte-icons'; 
@@ -8,7 +9,7 @@
     
 
     <NavbarModule></NavbarModule>
-    <ProfileBody />
+    <ProfileBody ></ProfileBody>
 
 
 <!-- <Search>

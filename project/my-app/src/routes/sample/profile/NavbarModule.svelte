@@ -23,7 +23,7 @@ import { SearchOutline } from 'flowbite-svelte-icons';
     </div>
     <NavUl>
       <NavLi href="/" active={true}>Home</NavLi>
-      <NavLi href="/about">Profile</NavLi>
-      <NavLi href="/docs/components/navbar">Notifications</NavLi>
+      <NavLi href="/about">About</NavLi>
+      <NavLi href="/docs/components/navbar">Navbar</NavLi>
     </NavUl>
   </Navbar>
