@@ -55,11 +55,11 @@
 
     if (res.ok) {
       const data = await res.json();
-      token.set(data.token);
+      // token.set(data.token);
       console.log(data);
       if(data.success){
         alert("Password Updated Successfully");
-        goto(redirecturl);
+        location.reload();
       }
     }
 
@@ -79,11 +79,11 @@
 
     if (res.ok) {
       const data = await res.json();
-      token.set(data.token);
       console.log(data);
       if(data.success){
         alert("Profile Updated Successfully");
-        goto(redirecturl);
+        //goto(redirecturl);
+        location.reload();
       }
     }
 

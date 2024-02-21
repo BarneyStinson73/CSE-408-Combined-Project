@@ -2,6 +2,13 @@ const router = require("express").Router();
 const { as } = require("pg-promise");
 const db = require("./db.js");
 
+const crypto = require("crypto");
+function sha256(message) {
+    const hash = crypto.createHash("sha256");
+    hash.update(message);
+    return hash.digest("hex");
+}
+
 const kanbanRouter = require("./kanban.js");
 // app.use(express.json());
 // app.use(cors({ origin: "*" }));
@@ -134,6 +141,7 @@ router.route("/update_profile").post((req, res) => {
             let response = {
                 message: "User profile updated successfully",
                 data: data,
+                success: true
             };
             res.status(200).json(response);
         })
@@ -167,6 +175,7 @@ router.route("/update_password").post(async(req, res) => {
             let response = {
                 message: "User password updated successfully",
                 data: data,
+                success: true
             };
             res.status(200).json(response);
         })
