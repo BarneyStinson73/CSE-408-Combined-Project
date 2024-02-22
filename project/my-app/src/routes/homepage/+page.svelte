@@ -196,7 +196,7 @@ import { Progressbar } from 'flowbite-svelte';
         </AccordionItem>
       {/each}
     {:else}
-      <p class="text-gray-500 dark:text-gray-400">There is nothing to bother you right now.</p>
+      <p class="text-gray-500 dark:text-gray-400">There is nothing to bother you right now.Have fun!!</p>
     {/if}
   </Accordion>
 </div>

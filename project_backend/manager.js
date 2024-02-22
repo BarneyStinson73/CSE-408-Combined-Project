@@ -17,18 +17,6 @@ router.route("/homepage").post(async (req, res) => {
         `SELECT "userName","position" FROM "User" WHERE "userId" = $1`,
         [id]
     );
-//     let reminders = await db.any(
-//     `SELECT 
-//         'Project ' || t."taskId" || ',' || t."taskName" || ':' || n."notificationMessage" as message,
-//         n."notificationType",
-//         un."creationTime"
-//     FROM "Notifications" n
-//     JOIN "UserTaskNotification" un ON n."notificationId" = un."notificationId"
-//     JOIN "Task" t ON un."taskId" = t."taskId"
-//     WHERE un."userId" = $1
-//     AND n."notificationType" = 1`,
-//     [id]
-// );
 let reminders = await db.any(
     `SELECT 
         p."projectName" || ',' || t."taskName" as header,
@@ -409,11 +397,12 @@ router.route("/projects/tasks").post((req, res) => {
 });
 
 router.route("/notifications").post((req, res) => {
-    let { id } = req.body;
+    let id = req.user["userId"];
+    console.log(id);
     db.any(
-        `SELECT n."notificationMessage", n."notificationType", n."creationTime", un."taskId"
+        `SELECT n."notificationMessage", n."notificationType", un."creationTime", un."taskId"
       FROM "Notifications" n
-      JOIN "UserNotification" un ON n."notificationId" = un."notificationId"
+      JOIN "UserTaskNotification" un ON n."notificationId" = un."notificationId"
       WHERE un."userId" = $1;`,
         [id]
     )

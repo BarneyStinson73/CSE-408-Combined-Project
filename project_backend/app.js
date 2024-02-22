@@ -99,6 +99,15 @@ app.post("/register", async (req, res) => {
         console.log(err);
     }
 });
+app.post("/logout", async (req, res) => {
+    let response = {
+        message: "Logout successful",
+        success: true,
+    
+    };
+    res.status(200).json(response);
+
+});
 
 
 app.use("/manager", verifyToken, checkAccountType("admin"),managerRouter);

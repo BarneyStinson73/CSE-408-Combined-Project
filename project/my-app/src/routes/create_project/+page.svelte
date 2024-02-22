@@ -36,7 +36,7 @@ import { token } from '$lib/token.js';
   let sp_collaborators= $page.data.managers.map((sp_collaborator)=>{
     return {value:sp_collaborator.userId, name:sp_collaborator.userName}
   });
-
+  import NavbarModule from './NavbarModule.svelte';
 
   async function project_creation() {
     console.log(project_name, project_manager, project_users,project_special_users,project_tags,start_date,deadline); 
@@ -62,7 +62,7 @@ import { token } from '$lib/token.js';
   }
 </script>
 
-
+<NavbarModule></NavbarModule>
 <div class="w-1/2 m-auto h-screen grid grid-cols-1 items-center">
 <form class="bg-blue-100 px-10 h-3/4 rounded" on:submit|preventDefault={project_creation}>
   <h1 class="text-center">New Project</h1>
