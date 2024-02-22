@@ -2,9 +2,10 @@
 <script>
     import { Card } from 'flowbite-svelte';
     import { GiftBoxSolid, ArrowUpRightFromSquareOutline } from 'flowbite-svelte-icons';
+    import NavbarModule from './NavbarModule.svelte'
     let notifications = [1,2,3,4,5,7];
     let type = 1;
-    let svgType1 = "https://www.clipartmax.com/png/middle/301-3011314_pe-success-icon-task-done.png";
+    let svgType1 = "https://icon-library.com/images/completed-icon/completed-icon-6.jpg";
     let svgType2 = "./src/job.png";
     let svgType3 = "./src/danger.png";
 
@@ -12,12 +13,16 @@
     let alt = (type===1)?("done") : ((type===2)?("job coming"):("deadline extended"));
     let notImage = './src/routes/notification/notft.jpg'
 </script>
+<NavbarModule></NavbarModule>
+<!-- give a slim border for <hr> tag -->
+<hr class="my-.5 border-gray-300 dark:border-gray-700" />
+
 <div class="grid grid-cols-2">
     <div class="col-span-1 ">
         <img src="https://static.vecteezy.com/system/resources/previews/000/442/087/original/notification-vector-icon.jpg" class="w-full h-screen object-cover object-center sticky top-0" alt='Notification'>
     </div>
     <div class='flex flex-col min-h-screen'>
-        <h1 class = 'bg-green-200'>Notifications</h1>
+        <h1 class = 'bg-blue-200'>Notifications</h1>
         {#each notifications as notification}
         
             <div class='w-full pl-2 pr-2' >

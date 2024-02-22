@@ -12,7 +12,7 @@
   let password = '';
 
   async function login() {
-    const redirecturl='/profile';
+    const redirecturl='/homepage';
     const res = await fetch('http://localhost:3000/login', {
       method: 'POST',
       headers: {

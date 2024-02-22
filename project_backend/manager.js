@@ -10,54 +10,59 @@ function sha256(message) {
 }
 
 const kanbanRouter = require("./kanban.js");
-// app.use(express.json());
-// app.use(cors({ origin: "*" }));
 
-// router.route("/profile").post(async (req, res) => {
-//     let id = req.user["userId"];
+router.route("/homepage").post(async (req, res) => {
+    let id = req.user["userId"];
+    let person=await db.any(
+        `SELECT "userName","position" FROM "User" WHERE "userId" = $1`,
+        [id]
+    );
+//     let reminders = await db.any(
+//     `SELECT 
+//         'Project ' || t."taskId" || ',' || t."taskName" || ':' || n."notificationMessage" as message,
+//         n."notificationType",
+//         un."creationTime"
+//     FROM "Notifications" n
+//     JOIN "UserTaskNotification" un ON n."notificationId" = un."notificationId"
+//     JOIN "Task" t ON un."taskId" = t."taskId"
+//     WHERE un."userId" = $1
+//     AND n."notificationType" = 1`,
+//     [id]
+// );
+let reminders = await db.any(
+    `SELECT 
+        p."projectName" || ',' || t."taskName" as header,
+        n."notificationMessage" as message,
+        n."notificationType",
+        un."creationTime"
+    FROM "Notifications" n
+    JOIN "UserTaskNotification" un ON n."notificationId" = un."notificationId"
+    JOIN "Task" t ON un."taskId" = t."taskId"
+    JOIN "ProjectTask" pt ON t."taskId" = pt."taskId"
+    JOIN "Project" p ON pt."projectId" = p."projectId"
+    WHERE un."userId" = $1
+    AND n."notificationType" = 1`,
+    [id]
+);
 
-//     let user_data = await db.any(`SELECT * FROM "User" WHERE "userId" = $1`, [
-//         id,
-//     ]);
-//     let project_data = await db.any(
-//         `
-//             SELECT
-//                 p."projectId",
-//                 p."progression",
-//                 p."projectName",
-//                 p."deadline",
-//                 ARRAY_AGG(u."userId") AS involvedUsers,
-//                 ARRAY_AGG(t."tagName") AS projectTags
-//             FROM
-//                 "Project" p
-//             JOIN
-//                 "ProjectUser" pu ON p."projectId" = pu."projectId"
-//             JOIN
-//                 "ProjectUser" u ON u."projectId" = p."projectId"
-//             JOIN
-//                 "ProjectTag" pt ON pt."projectId" = p."projectId"
-//             JOIN
-//                 "Tags" t ON t."tagId" = pt."tagId"
-//             WHERE
-//                 pu."userId" = $1
-//             GROUP BY
-//                 p."projectId", p."progression", p."projectName", p."deadline";
-//         `,
-//         [id]
-//     );
-//     try {
-//         let response = {
-//             message: "User profile retrieved successfully",
-//             // data: data,
-//             user_data: user_data,
-//             project_data: project_data,
-//         };
-//         console.log(response);
-//         res.status(200).json(response);
-//     } catch (err) {
-//         console.log(err);
-//     }
-// });
+
+
+
+
+        //send these as responses in try-catch block
+    try {
+        let response = {
+            message: "Homepage data retrieved successfully",
+            reminders: reminders,
+            person:person,
+            // header:header
+        };
+        res.status(200).json(response);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error retrieving homepage data" });
+    }
+} );
 
 router.route("/profile").post(async (req, res) => {
     try {
