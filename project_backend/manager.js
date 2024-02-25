@@ -420,13 +420,48 @@ router.route("/notifications").post((req, res) => {
 
 // if else statement to check if the project or task we are trying to access has its leaf flag set to true
 
-router.route("/project/task/details").post(async (req, res) => {
+router.route("/project/retrieve_task_from_task").post(async (req, res) => {
     let { task_id } = req.body;
     await db
         .any(`SELECT * FROM "Task" WHERE "parentId" = $1`, [task_id])
         .then((data) => {
             let response = {
                 message: "Task details retrieved successfully",
+                data: data,
+            };
+            res.status(200).json(response);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
+router.route("/project/retrieve_task_from_project").post(async (req, res) => {
+    let { project_id } = req.body;
+    await db
+        .any(`SELECT * FROM "ProjectTask" WHERE "projectId" = $1`, [project_id])
+        .then((data) => {
+            let response = {
+                message: "Task details retrieved successfully",
+                data: data,
+            };
+            res.status(200).json(response);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+} );
+
+router.route("/project_admins").post(async (req, res) => {
+    let { project_id } = req.body;
+    await db
+        .any(
+            `SELECT "User"."userId", "User"."userName" FROM "ProjectUser" INNER JOIN "User" ON "ProjectUser"."userId" = "User"."userId" WHERE "ProjectUser"."projectId" = $1 AND "User"."type" = 'admin'`,
+            [projectId]
+        )
+        .then((data) => {
+            let response = {
+                message: "Project admins retrieved successfully",
                 data: data,
             };
             res.status(200).json(response);

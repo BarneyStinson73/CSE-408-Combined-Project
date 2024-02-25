@@ -3,7 +3,7 @@
     import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper, Label, Input, Checkbox , A } from 'flowbite-svelte';
     import { LockOpenSolid , GridSolid, MailBoxSolid, UserSolid, FireSolid} from 'flowbite-svelte-icons';
     import { Tooltip} from 'flowbite-svelte';
-    import { Card, Dropdown, DropdownItem, Avatar, Button } from 'flowbite-svelte';
+    import { Card, Dropdown, DropdownItem, Avatar, Button,Select,MultiSelect } from 'flowbite-svelte';
 
     import { Modal } from 'flowbite-svelte';
     
@@ -14,7 +14,10 @@
    
     let defModal = false;
     let fModal = false;
-        let placement = 'right';
+    let defaultModal = false;
+    let formModal = false;
+    let placement = 'right';
+    let task_name='',start_date='',deadline='';
     // let count=[1,2,3];
     let projectData= $page.data.project_data;
     let count  = projectData.length;
@@ -115,6 +118,44 @@ const tagCounts = calculateTagCounts(projectData);
 tags = Object.entries(tagCounts).map(([tag, projects]) => ({ tag, projects }));
 
 console.log(tagCounts);
+let managers=[];
+let collaborators=[];
+let tasks=[];
+let tasks2=[];
+let showing_tasks = tasks;
+let selected_manager = [];
+  let selected_tag = [];
+  let selected_collaborator = [];
+  let selected_sp_collaborator = [];
+async function task_creation(){
+
+}
+
+
+async function project_task_manager(){
+    const res = await fetch('http://localhost:3000/manager/project_admins', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: get(token)
+
+      },
+      body: JSON.stringify({managers })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      token.set(data.token);
+      console.log(data);
+      // console.log(data.success);
+      if(data.success){
+        alert('Project admins are retrieved');
+      }
+    }
+}
+async function task_task_manager(){
+
+}
 </script>
 
 
@@ -243,9 +284,49 @@ console.log(tagCounts);
               
                 <Progressbar progress={project.progression} size="h-4" labelInside style="background-color: lime"/>
                 <br>
-                <Button class="w-fit" style="background-color: green">
+                <div class="grid grid-cols-2 gap-4">
+                <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>
                   Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
                 </Button>
+                <Button on:click={() => (formModal = true)}>Create New Task</Button>
+                </div>
+                <Modal bind:open={formModal} size="md" autoclose={false} class="w-full">
+  <form class="bg-blue-100 px-10 h-full rounded" on:submit|preventDefault={task_creation}>
+  <h1 class="text-center">New Task</h1>
+  <hr>
+  <div class="my-4">
+    <Label for="email" class="mb-2">Task Name</Label>
+    <Input type="text" id="name" placeholder="Sample Task" required bind:value={task_name} />
+  </div>
+  <div class="my-6">
+    <Label>Task Manager
+  <Select class="mt-2" items={managers} bind:value={selected_manager} />
+</Label>
+  </div>
+  <div class="mb-6">
+    <Label for="last_name" class="mb-2">Tags</Label>
+    <MultiSelect items={tags} bind:value={selected_tag} />
+  </div>
+  <div class="mb-6">
+    <Label for="last_name" class="mb-2">Collaborators</Label>
+    <MultiSelect items={collaborators} bind:value={selected_collaborator} />
+  </div>
+  <div class="grid gap-6 mb-4 md:grid-cols-2">
+    <div>
+      <Label for="last_name" class="mb-2">Start Date</Label>
+      <Input type="date" id="last_name" placeholder="Doe" required bind:value={start_date}/>
+      
+    </div>
+    <div>
+      <Label for="last_name" class="mb-2">Expiration Date</Label>
+      <Input type="date" id="last_name" placeholder="Doe" required bind:value={deadline}/>
+    </div>
+
+  </div>
+  <Button type="submit">Submit</Button>
+</form>
+</Modal>
+                
               </Card>
             </div>
               <div class='my-10'></div>
