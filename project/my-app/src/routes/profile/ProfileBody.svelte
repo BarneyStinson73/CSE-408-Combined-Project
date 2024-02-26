@@ -353,7 +353,9 @@ async function project_task_details(){
                 <Progressbar progress={project.progression} size="h-4" labelInside style="background-color: lime"/>
                 <br>
                 <div class="grid grid-cols-2 gap-4"><Button class="w-fit" style="background-color: green" on:click={() => {
-                projectModal = true; project_id=project.projectId}}> Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
+                projectModal = true; project_id=project.projectId;
+                project_details = project_task_details();
+                }}> Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
                 </Button>
                 <Button on:click={() => (formModal = true)}>Create New Task</Button>
                 </div>
