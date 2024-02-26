@@ -586,4 +586,8 @@ FROM "ProjectTask" p INNER JOIN "Task" t ON p."taskId" = t."taskId" WHERE p."pro
     };
     res.status(200).json(response);
 });
+
+router.route("/update_project_progression").post(async (req, res) => {
+    
+} );
 module.exports = router;

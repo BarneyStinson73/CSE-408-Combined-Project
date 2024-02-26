@@ -15,6 +15,7 @@
     let defModal = false;
     let fModal = false;
     let defaultModal = false;
+    let projectModal = false;
     let formModal = false;
     let placement = 'right';
     let task_name='',start_date='',deadline='';
@@ -199,6 +200,30 @@ async function task_details(){
     }
     return data.data;
 }
+let project_id='';
+let project_details=project_task_details();
+async function project_task_details(){
+    const res = await fetch('http://localhost:3000/manager/project_task_details', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: get(token)
+      },
+      body: JSON.stringify({ project_id })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      token.set(data.token);
+      console.log(data);
+      // console.log(data.success);
+      if(data.success){
+        alert('Project details are retrieved');
+      }
+    }
+    return data.data;
+}
+
 </script>
 
 
@@ -328,7 +353,7 @@ async function task_details(){
                 <Progressbar progress={project.progression} size="h-4" labelInside style="background-color: lime"/>
                 <br>
                 <div class="grid grid-cols-2 gap-4"><Button class="w-fit" style="background-color: green" on:click={() => {
-                defaultModal = true}}> Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
+                projectModal = true; project_id=project.projectId}}> Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
                 </Button>
                 <Button on:click={() => (formModal = true)}>Create New Task</Button>
                 </div>
@@ -396,6 +421,33 @@ async function task_details(){
   defaultModal = true; // Set to true without quotes
   selected_task_id = task.taskId;
   console.log("Selected task ID:", selected_task_id);
+  showing_tasks = tasks2;
+}}>Details</Button>
+
+        <Button class="w-fit" style="background-color: red" on:click={() => (formModal = true)}>Create New</Button>
+        </div>
+      </Card>
+{/each}
+  
+</Modal>
+
+
+
+<Modal title="Tasks" bind:open={projectModal} autoclose={false}  outsideclose>
+  <div class="grid grid-cols-2 gap-4">
+    {#each project_details as proj}
+      <Card class="w-full m-auto">
+        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{proj.taskName}</h5>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline: {proj.deadline}</p>
+
+        <Progressbar progress={proj.progression} size="h-4" labelInside style="background-color: lime"/>
+        <br>
+        <div class="grid grid-cols-2 gap-4">
+        <Button class="w-fit" style="background-color: green" on:click={() => {
+  defaultModal = true; // Set to true without quotes
+  selected_task_id = proj.taskId;
+  console.log("Selected task ID:", selected_task_id);
+  showing_tasks = tasks2;
 }}>Details</Button>
 
         <Button class="w-fit" style="background-color: red" on:click={() => (formModal = true)}>Create New</Button>
