@@ -3,6 +3,7 @@
   
     import { BottomNav, BottomNavItem, Tooltip, Skeleton, ImagePlaceholder , Button } from 'flowbite-svelte';
     import { HomeSolid, WalletSolid, AdjustmentsVerticalOutline, UserCircleSolid, PlusSolid } from 'flowbite-svelte-icons';
+    import NavbarModule from '../create_project/NavbarModule.svelte';
 
     let todo = [{id : 1  , taskName : "ToDo1" , deadline : "20-12-2020"},
                 {id : 2 , taskName : "ToDo2" , deadline : "20-12-2020"},
@@ -25,7 +26,11 @@
       complete = [...complete , tempObj];
 
     }
+
+    let tasks=[];
+    
 </script>
+<NavbarModule />
 <div class="h-screen p-2">
     <div class="grid grid-cols-3 gap-5">
       <!-- To-do -->

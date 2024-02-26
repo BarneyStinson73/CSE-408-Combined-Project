@@ -41,6 +41,7 @@
 	"type": "module",
 	"dependencies": {
 		"@skeletonlabs/skeleton": "^2.8.0",
+		"apexcharts": "^3.46.0",
 		"svelte-awesome-icons": "^1.1.0",
 		"svelte-icons": "^2.1.0",
 		"svelte-routing": "^2.12.0"

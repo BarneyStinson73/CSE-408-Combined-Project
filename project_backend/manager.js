@@ -471,4 +471,107 @@ router.route("/project_admins").post(async (req, res) => {
         });
 });
 
+
+
+
+// router.route("/project/Gantt").post(async (req, res) => {
+//     let { task_id ,project_id} = req.body;
+//     console.log(task_id,project_id);
+
+//     // Enhanced query with JOINs and conditional filters
+//     let data = await db.any(
+//         `
+//         SELECT 
+//             t1."taskId", 
+//             t1."taskName", 
+//             t1."progression", 
+//             t1."startTime", 
+//             t1."endTime", 
+//             t1."deadline", 
+//             t1."parentId", 
+//             t1."isLeaf",
+//             dt."dependentId" AS dependency
+//         FROM "Task" t1
+//         LEFT JOIN "DependentTask" dt ON t1."taskId" = dt."masterId"
+//         INNER JOIN "ProjectTask" pt ON t1."taskId" = pt."taskId"
+//         WHERE 
+//             pt."projectId" = $1 AND 
+//             t1."parentId" = $2 AND 
+//             t1."isLeaf" = 'FALSE' AND 
+//             (
+//                 SELECT COUNT(*) 
+//                 FROM "Task" t2 
+//                 WHERE t2."parentId" = t1."taskId" AND t2."isLeaf" = 'TRUE'
+//             ) > 0
+//         `,
+//         [project_id, task_id]
+//     );
+//     console.log(data);
+//     console.log(data.dependency);
+
+//     let response = {
+//         message: "Gantt data retrieved successfully",
+//         data: data,
+//     };
+//     res.status(200).json(response);
+// });
+
+router.route("/project/kanban_breadcrumb").post(async (req, res) => {
+    let { task_id } = req.body;
+
+    // Enhanced query with recursive CTE (Common Table Expression)
+    let data = await db.any(
+        `
+        WITH RECURSIVE children AS (
+            SELECT 
+                t1."taskId", 
+                t1."taskName", 
+                t1."progression", 
+                t1."startTime", 
+                t1."endTime", 
+                t1."deadline", 
+                t1."parentId", 
+                t1."isLeaf",
+                dt."dependentId" AS dependency
+            FROM "Task" t1
+            LEFT JOIN "DependentTask" dt ON t1."taskId" = dt."masterId"
+            WHERE t1."taskId" = $1
+            UNION ALL
+            SELECT 
+                c2."taskId", 
+                c2."taskName", 
+                c2."progression", 
+                c2."startTime", 
+                c2."endTime", 
+                c2."deadline", 
+                c2."parentId", 
+                c2."isLeaf",
+                dt2."dependentId" AS dependency
+            FROM children c1
+            INNER JOIN "Task" c2 ON c1."taskId" = c2."parentId"
+            LEFT JOIN "DependentTask" dt2 ON c2."taskId" = dt2."masterId"
+        )
+        SELECT * FROM children
+        `,
+        [task_id]
+    );
+
+    let response = {
+        message: "Gantt data retrieved successfully",
+        data: data,
+    };
+    res.status(200).json(response);
+});
+
+router.route("/task_details").post(async (req, res) => {
+    let { task_id } = req.body;
+    let data = await db.any(`SELECT * FROM "Task" WHERE "parentId" = $1`, [task_id]);
+    console.log(data);
+    let response = {
+        message: "Task details retrieved successfully",
+        data: data,
+    };
+    res.status(200).json(response);
+} );
+
 module.exports = router;

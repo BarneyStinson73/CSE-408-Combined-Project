@@ -128,7 +128,23 @@ let selected_manager = [];
   let selected_collaborator = [];
   let selected_sp_collaborator = [];
 async function task_creation(){
+    const res = await fetch('http://localhost:3000/manager/create_task', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: get(token)
+      },
+      body: JSON.stringify({ task_name, selected_manager, selected_tag, selected_collaborator, start_date, deadline})
+    });
 
+    if (res.ok) {
+      const data = await res.json();
+      console.log(data);
+      if(data.success){
+        alert("Task Created Successfully");
+        location.reload();
+      }
+    }
 }
 
 
@@ -155,6 +171,33 @@ async function project_task_manager(){
 }
 async function task_task_manager(){
 
+}
+
+
+
+
+let selected_task_id='';
+tasks2= task_details();
+async function task_details(){
+    const res = await fetch('http://localhost:3000/manager/task_details', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: get(token)
+      },
+      body: JSON.stringify({ selected_task_id })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      token.set(data.token);
+      console.log(data);
+      // console.log(data.success);
+      if(data.success){
+        alert('Task details are retrieved');
+      }
+    }
+    return data.data;
 }
 </script>
 
@@ -284,9 +327,8 @@ async function task_task_manager(){
               
                 <Progressbar progress={project.progression} size="h-4" labelInside style="background-color: lime"/>
                 <br>
-                <div class="grid grid-cols-2 gap-4">
-                <Button class="w-fit" style="background-color: green" on:click={() => (defaultModal = true)}>
-                  Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
+                <div class="grid grid-cols-2 gap-4"><Button class="w-fit" style="background-color: green" on:click={() => {
+                defaultModal = true}}> Details <ArrowRightOutline class="w-3.5 h-3.5 ms-2 text-white" />
                 </Button>
                 <Button on:click={() => (formModal = true)}>Create New Task</Button>
                 </div>
@@ -337,3 +379,24 @@ async function task_task_manager(){
        
     </div>
 </div>
+
+
+
+<Modal title="Tasks" bind:open={defaultModal} autoclose={false}  outsideclose>
+  <div class="grid grid-cols-2 gap-4">
+    {#each showing_tasks as task}
+      <Card class="w-full m-auto">
+        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{task.name}</h5>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">Deadline: {task.deadline}</p>
+
+        <Progressbar progress={task.progress} size="h-4" labelInside style="background-color: lime"/>
+        <br>
+        <div class="grid grid-cols-2 gap-4">
+        <Button class="w-fit" style="background-color: green" on:click={() => (showing_tasks=tasks2)}>Details</Button>
+
+        <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
+        </div>
+      </Card>
+{/each}
+  
+</Modal>
