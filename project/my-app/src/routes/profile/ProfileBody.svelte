@@ -392,9 +392,13 @@ async function task_details(){
         <Progressbar progress={task.progress} size="h-4" labelInside style="background-color: lime"/>
         <br>
         <div class="grid grid-cols-2 gap-4">
-        <Button class="w-fit" style="background-color: green" on:click={() => (showing_tasks=tasks2)}>Details</Button>
+        <Button class="w-fit" style="background-color: green" on:click={() => {
+  defaultModal = true; // Set to true without quotes
+  selected_task_id = task.taskId;
+  console.log("Selected task ID:", selected_task_id);
+}}>Details</Button>
 
-        <Button class="w-fit" style="background-color: red" on:click={() => (defaultModal = true)}>Create New</Button>
+        <Button class="w-fit" style="background-color: red" on:click={() => (formModal = true)}>Create New</Button>
         </div>
       </Card>
 {/each}

@@ -573,5 +573,17 @@ router.route("/task_details").post(async (req, res) => {
     };
     res.status(200).json(response);
 } );
-
+router.route("/project_task_details").post(async (req, res) => {
+    let { project_id } = req.body;
+    let data = await db.any(
+        `SELECT p."taskId", p."projectId", t."taskName", t."progression", t."deadline", t."parentId"
+FROM "ProjectTask" p INNER JOIN "Task" t ON p."taskId" = t."taskId" WHERE p."projectId" = $1`,
+        [project_id]
+    );
+    let response = {
+        message: "Project details retrieved successfully",
+        data: data,
+    };
+    res.status(200).json(response);
+});
 module.exports = router;
