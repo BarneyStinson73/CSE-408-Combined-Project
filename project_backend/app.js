@@ -9,36 +9,36 @@ const jwt = require("jsonwebtoken");
 const jwtSecret = process.env.JWT;
 
 function verifyToken(req, res, next) {
-    const bearerHeader = req.headers["authorization"];
-    if(!bearerHeader){
-        return res.status(403).json({message:"No token provided"});
+    console.log(req.headers);
+    const bearerHeader = req.headers["authorization"][1];
+    if (!bearerHeader) {
+        return res.status(403).json({ message: "No token provided" });
     }
-    try{
+    try {
         const decoded = jwt.verify(bearerHeader, jwtSecret);
         req.user = decoded;
         // console.log(decoded);
-        const currentTime = Math.floor(Date.now()/1000);
-        if(decoded.exp < currentTime){
-            return res.status(403).json({message:"Token expired"});
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp < currentTime) {
+            return res.status(403).json({ message: "Token expired" });
         }
         next();
-    }
-    catch(err){
+    } catch (err) {
         console.log(err);
-        return res.status(403).json({message:"Invalid token"});
+        return res.status(403).json({ message: "Invalid token" });
     }
 }
-function generateToken(user){
-    const token = jwt.sign(user, jwtSecret, {expiresIn: "24h"});
+function generateToken(user) {
+    const token = jwt.sign(user, jwtSecret, { expiresIn: "24h" });
     return token;
 }
-function checkAccountType(type){
-    return function(req, res, next){
-        if(req.user.type !== type){
-            return res.status(403).json({message:"Unauthorized"});
+function checkAccountType(type) {
+    return function (req, res, next) {
+        if (req.user.type !== type) {
+            return res.status(403).json({ message: "Unauthorized" });
         }
         next();
-    }
+    };
 }
 
 const managerRouter = require("./manager.js");
@@ -67,7 +67,10 @@ app.post("/login", async (req, res) => {
         // res.json(user);
         console.log(user);
         // console.log(user[0].userId);
-        const token = generateToken({userId: user[0].userId, type: user[0].type});
+        const token = generateToken({
+            userId: user[0].userId,
+            type: user[0].type,
+        });
         let response = {
             message: "Login successful",
             token: token,
@@ -103,14 +106,11 @@ app.post("/logout", async (req, res) => {
     let response = {
         message: "Logout successful",
         success: true,
-    
     };
     res.status(200).json(response);
-
 });
 
-
-app.use("/manager", verifyToken, checkAccountType("admin"),managerRouter);
+app.use("/manager", verifyToken, checkAccountType("admin"), managerRouter);
 app.use("/projects", verifyToken, projects_router);
 // app.use("/user", verifyToken,checkAccountType("user"), user_router);
 // const http = require("http");

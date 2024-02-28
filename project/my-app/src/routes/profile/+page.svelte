@@ -1,16 +1,13 @@
 <script>
+	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Input, Search } from 'flowbite-svelte';
+	import { Button, Dropdown, DropdownItem } from 'flowbite-svelte';
+	import { ChevronDownSolid, SearchOutline } from 'flowbite-svelte-icons';
+	import ProfileBody from './ProfileBody.svelte';
+	import NavbarModule from './NavbarModule.svelte';
+</script>
 
-    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger ,  Input , Search } from 'flowbite-svelte'
-    import {Button, Dropdown, DropdownItem } from 'flowbite-svelte';
-    import { ChevronDownSolid , SearchOutline } from 'flowbite-svelte-icons'; 
-    import ProfileBody from './ProfileBody.svelte'
-    import NavbarModule from './NavbarModule.svelte'
-  </script>
-    
-
-    <NavbarModule></NavbarModule>
-    <ProfileBody ></ProfileBody>
-
+<NavbarModule></NavbarModule>
+<ProfileBody></ProfileBody>
 
 <!-- <Search>
     <Button>Search</Button>

@@ -13,12 +13,12 @@ const kanbanRouter = require("./kanban.js");
 
 router.route("/homepage").post(async (req, res) => {
     let id = req.user["userId"];
-    let person=await db.any(
+    let person = await db.any(
         `SELECT "userName","position" FROM "User" WHERE "userId" = $1`,
         [id]
     );
-let reminders = await db.any(
-    `SELECT 
+    let reminders = await db.any(
+        `SELECT 
         p."projectName" || ',' || t."taskName" as header,
         n."notificationMessage" as message,
         n."notificationType",
@@ -30,19 +30,15 @@ let reminders = await db.any(
     JOIN "Project" p ON pt."projectId" = p."projectId"
     WHERE un."userId" = $1
     AND n."notificationType" = 1`,
-    [id]
-);
+        [id]
+    );
 
-
-
-
-
-        //send these as responses in try-catch block
+    //send these as responses in try-catch block
     try {
         let response = {
             message: "Homepage data retrieved successfully",
             reminders: reminders,
-            person:person,
+            person: person,
             // header:header
         };
         res.status(200).json(response);
@@ -50,7 +46,7 @@ let reminders = await db.any(
         console.log(err);
         res.status(500).json({ message: "Error retrieving homepage data" });
     }
-} );
+});
 
 router.route("/profile").post(async (req, res) => {
     try {
@@ -124,17 +120,17 @@ router.route("/profile").post(async (req, res) => {
 router.route("/update_profile").post((req, res) => {
     let id = req.user["userId"];
 
-    let { username, email,contact } = req.body;
+    let { username, email, contact } = req.body;
     // password=sha256(password);
     db.any(
         `UPDATE "User" SET "userName" = $1, "email" = $2 ,"contactNo"=$3 WHERE "userId" = $4`,
-        [username, email,contact, id]
+        [username, email, contact, id]
     )
         .then((data) => {
             let response = {
                 message: "User profile updated successfully",
                 data: data,
-                success: true
+                success: true,
             };
             res.status(200).json(response);
         })
@@ -143,16 +139,18 @@ router.route("/update_profile").post((req, res) => {
         });
 });
 
-router.route("/update_password").post(async(req, res) => {
+router.route("/update_password").post(async (req, res) => {
     let id = req.user["userId"];
 
     let { prev_password, new_password } = req.body;
     new_password = sha256(new_password);
     // check whether previous password is correct
-    let old_pass=await db.any(`SELECT * FROM "User" WHERE "userId" = $1`, [id]);
-    old_pass=old_pass[0].password;
-    prev_password=sha256(prev_password);
-    if(old_pass!=prev_password){
+    let old_pass = await db.any(`SELECT * FROM "User" WHERE "userId" = $1`, [
+        id,
+    ]);
+    old_pass = old_pass[0].password;
+    prev_password = sha256(prev_password);
+    if (old_pass != prev_password) {
         let response = {
             message: "Previous password is incorrect",
         };
@@ -168,7 +166,7 @@ router.route("/update_password").post(async(req, res) => {
             let response = {
                 message: "User password updated successfully",
                 data: data,
-                success: true
+                success: true,
             };
             res.status(200).json(response);
         })
@@ -450,7 +448,7 @@ router.route("/project/retrieve_task_from_project").post(async (req, res) => {
         .catch((err) => {
             console.log(err);
         });
-} );
+});
 
 router.route("/project_admins").post(async (req, res) => {
     let { project_id } = req.body;
@@ -471,9 +469,6 @@ router.route("/project_admins").post(async (req, res) => {
         });
 });
 
-
-
-
 // router.route("/project/Gantt").post(async (req, res) => {
 //     let { task_id ,project_id} = req.body;
 //     console.log(task_id,project_id);
@@ -481,26 +476,26 @@ router.route("/project_admins").post(async (req, res) => {
 //     // Enhanced query with JOINs and conditional filters
 //     let data = await db.any(
 //         `
-//         SELECT 
-//             t1."taskId", 
-//             t1."taskName", 
-//             t1."progression", 
-//             t1."startTime", 
-//             t1."endTime", 
-//             t1."deadline", 
-//             t1."parentId", 
+//         SELECT
+//             t1."taskId",
+//             t1."taskName",
+//             t1."progression",
+//             t1."startTime",
+//             t1."endTime",
+//             t1."deadline",
+//             t1."parentId",
 //             t1."isLeaf",
 //             dt."dependentId" AS dependency
 //         FROM "Task" t1
 //         LEFT JOIN "DependentTask" dt ON t1."taskId" = dt."masterId"
 //         INNER JOIN "ProjectTask" pt ON t1."taskId" = pt."taskId"
-//         WHERE 
-//             pt."projectId" = $1 AND 
-//             t1."parentId" = $2 AND 
-//             t1."isLeaf" = 'FALSE' AND 
+//         WHERE
+//             pt."projectId" = $1 AND
+//             t1."parentId" = $2 AND
+//             t1."isLeaf" = 'FALSE' AND
 //             (
-//                 SELECT COUNT(*) 
-//                 FROM "Task" t2 
+//                 SELECT COUNT(*)
+//                 FROM "Task" t2
 //                 WHERE t2."parentId" = t1."taskId" AND t2."isLeaf" = 'TRUE'
 //             ) > 0
 //         `,
@@ -565,29 +560,35 @@ router.route("/project/kanban_breadcrumb").post(async (req, res) => {
 
 router.route("/task_details").post(async (req, res) => {
     let { task_id } = req.body;
-    let data = await db.any(`SELECT * FROM "Task" WHERE "parentId" = $1`, [task_id]);
+    let data = await db.any(`SELECT * FROM "Task" WHERE "parentId" = $1`, [
+        task_id,
+    ]);
     console.log(data);
     let response = {
         message: "Task details retrieved successfully",
         data: data,
     };
     res.status(200).json(response);
-} );
+});
 router.route("/project_task_details").post(async (req, res) => {
+    console.log(req.body);
     let { project_id } = req.body;
-    let data = await db.any(
-        `SELECT p."taskId", p."projectId", t."taskName", t."progression", t."deadline", t."parentId"
+    try {
+        let data = await db.any(
+            `SELECT p."taskId", p."projectId", t."taskName", t."progression", t."deadline", t."parentId"
 FROM "ProjectTask" p INNER JOIN "Task" t ON p."taskId" = t."taskId" WHERE p."projectId" = $1`,
-        [project_id]
-    );
-    let response = {
-        message: "Project details retrieved successfully",
-        data: data,
-    };
-    res.status(200).json(response);
+            [project_id]
+        );
+        let response = {
+            message: "Project details retrieved successfully",
+            data: data,
+        };
+        res.status(200).json(response);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error retrieving project details" });
+    }
 });
 
-router.route("/update_project_progression").post(async (req, res) => {
-    
-} );
+router.route("/update_project_progression").post(async (req, res) => {});
 module.exports = router;
