@@ -50,25 +50,17 @@
 	}
 </style> -->
 
-
-
-
-
-
-
-
-
 <script>
 	import '../app.pcss';
 	import Header from './Header.svelte';
 	import './styles.css';
-	
+	import NavbarModule from './profile/profile/NavbarModule.svelte';
 </script>
 
 <div>
 	<!-- <Header></Header> -->
-
-	<main >
+	<!-- <NavbarModule></NavbarModule> -->
+	<main>
 		<slot />
 	</main>
 </div>

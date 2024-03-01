@@ -1,13 +1,6 @@
 <script>
 	import {
-		Sidebar,
-		SidebarGroup,
-		SidebarItem,
-		SidebarWrapper,
-		Label,
-		Input,
-		Checkbox,
-		A
+		Sidebar,SidebarGroup,SidebarItem,SidebarWrapper,Label,Input,Checkbox,A
 	} from 'flowbite-svelte';
 	import {
 		LockOpenSolid,
@@ -49,6 +42,7 @@
 	import { Progressbar } from 'flowbite-svelte';
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
+	import { onMount } from 'svelte';
 
 	// let name = "John Doe";
 	let name = $page.data.user_data[0].userName;
@@ -76,7 +70,7 @@
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				authorization: token
+				authorization: localStorage.getItem('token') || ''
 			},
 			body: JSON.stringify({ prev_password, new_password })
 		});
@@ -99,7 +93,8 @@
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				authorization: get(token)
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
 			},
 			body: JSON.stringify({ username, email, contact })
 		});
@@ -149,7 +144,8 @@
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				authorization: get(token)
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
 			},
 			body: JSON.stringify({
 				task_name,
@@ -176,7 +172,8 @@
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				authorization: get(token)
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
 			},
 			body: JSON.stringify({ managers })
 		});
@@ -200,14 +197,15 @@
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				authorization: get(token)
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
 			},
 			body: JSON.stringify({ selected_task_id })
 		});
 
 		if (res.ok) {
 			const data = await res.json();
-			token.set(data.token);
+			// token.set(data.token);
 			console.log('Task Details:', data);
 			// console.log(data.success);
 			if (data.success) {
@@ -217,28 +215,36 @@
 		}
 	}
 	let project_id = 1;
+	let token_now;
+	onMount(() => {
+		token_now = localStorage.getItem('token');
+		console.log('Token On Mount:', token_now);
+	});
 	let project_details = project_task_details();
 	async function project_task_details() {
 		console.log('In project_task_details', project_id);
-		console.log('Token:', get(token));
-		console.log('Another token', get(token));
+		console.log('Token Before:', token_now);
+		console.log('Token Now:', localStorage.getItem('token'));
 		const res = await fetch('http://localhost:3000/manager/project_task_details', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				authorization: get(token)
+				// authorization: get(token)
+				authorization: localStorage.getItem('token')
 			},
 			body: JSON.stringify({ project_id })
 		});
 
+		console.log('Token After:', localStorage.getItem('token'));
 		if (res.ok) {
 			const data = await res.json();
-			token.set(data.token);
+			// token.set(data.token);
 			// console.log(data.success);
 			if (data.success) {
 				alert('Project details are retrieved');
 			}
 			console.log('Retrieved results', data);
+			console.log('Token After:', localStorage.getItem('token'));
 			return data.data;
 		}
 	}
@@ -406,8 +412,8 @@
 		{#each projectData as project, i}
 			{#if i < count}
 				<div class="grid md:grid-cols-2">
-					<div class="mr-20">
-						<Card class="m-auto w-full">
+					<div class="mr-0">
+						<Card class="w-full m-auto">
 							<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
 								{project.projectName}
 							</h5>
@@ -522,7 +528,17 @@
 					{task.name}
 				</h5>
 				<p class="mb-3 font-normal leading-tight text-gray-700 dark:text-gray-400">
-					Deadline: {task.deadline}
+					Deadline: 
+					{new Date(task.deadline).toLocaleTimeString([], {
+									hour: 'numeric',
+									minute: 'numeric'
+								}) +
+									', ' +
+									new Date(task.deadline).toLocaleDateString([], {
+										day: 'numeric',
+										month: 'long',
+										year: 'numeric'
+									})}
 				</p>
 
 				<Progressbar
@@ -537,10 +553,18 @@
 						class="w-fit"
 						style="background-color: green"
 						on:click={() => {
-							defaultModal = true; // Set to true without quotes
-							selected_task_id = task.taskId;
-							console.log('Selected task ID:', selected_task_id);
-							showing_tasks = tasks2;
+							
+							// selected_task_id = task.taskId;
+							// console.log('Selected task ID:', selected_task_id);
+							
+
+							// task_details().then((data)=>{
+							// 	console.log('working on retrieving child tasks',data);
+							// 	tasks = data;
+							// 	defaultModal = true;
+							// })
+
+
 						}}>Details</Button
 					>
 
@@ -562,7 +586,21 @@
 						{proj.taskName}
 					</h5>
 					<p class="mb-3 font-normal leading-tight text-gray-700 dark:text-gray-400">
-						Deadline: {proj.deadline}
+						Deadline:
+					
+					
+					{new Date(proj.deadline).toLocaleTimeString([], {
+									hour: 'numeric',
+									minute: 'numeric'
+								}) +
+									', ' +
+									new Date(proj.deadline).toLocaleDateString([], {
+										day: 'numeric',
+										month: 'long',
+										year: 'numeric'
+									})}
+					
+					
 					</p>
 
 					<Progressbar
@@ -577,10 +615,20 @@
 							class="w-fit"
 							style="background-color: green"
 							on:click={() => {
-								defaultModal = true; // Set to true without quotes
+								// defaultModal = true; // Set to true without quotes
 								selected_task_id = proj.taskId;
 								console.log('Selected task ID:', selected_task_id);
-								showing_tasks = tasks2;
+								// showing_tasks = tasks2;
+								console.log('Tasks:', tasks2);
+								console.log('showing_tasks:', showing_tasks);
+								task_details().then((data)=>{
+								console.log('working on retrieving child tasks',data);
+								tasks = data;
+								defaultModal = true;
+							})
+
+								
+
 							}}>Details</Button
 						>
 
@@ -602,3 +650,15 @@
 		padding-left: 10 px;
 	}
 </style>
+
+
+<!-- 
+selected_task_id = task.taskId;
+							// console.log('Selected task ID:', selected_task_id);
+							
+
+							task_details().then((data)=>{
+								console.log('working on retrieving child tasks',data);
+								tasks = data;
+								defaultModal = true;
+							}) -->

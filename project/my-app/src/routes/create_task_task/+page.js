@@ -18,13 +18,14 @@
 import { get } from 'svelte/store';
 import { token } from '$lib/token.js';
 export const ssr = false;
-let taskId='';
+let taskId = '';
 export async function load() {
 	const res = await fetch('http://localhost:3000/manager/task_creation_form_task', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			authorization: get(token)
+			// authorization: get(token)
+			authorization: localStorage.getItem('token') || ''
 		},
 		body: JSON.stringify({ taskId })
 	});

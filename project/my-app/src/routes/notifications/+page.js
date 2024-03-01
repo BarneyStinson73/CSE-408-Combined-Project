@@ -7,7 +7,8 @@ export async function load() {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			authorization: get(token)
+			// authorization: get(token)
+			authorization: localStorage.getItem('token') || ''
 		}
 	});
 
@@ -18,7 +19,7 @@ export async function load() {
 			alert('Notifications fetched successfully');
 			// notifications = data;
 			// location.reload();
-		} 
-        return data;
+		}
+		return data;
 	}
 }

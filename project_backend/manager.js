@@ -590,5 +590,90 @@ FROM "ProjectTask" p INNER JOIN "Task" t ON p."taskId" = t."taskId" WHERE p."pro
     }
 });
 
-router.route("/update_project_progression").post(async (req, res) => {});
+// router.route("/update_project_progression").post(async (req, res) => {});
+
+// router.route("/todo_extract").post(async (req, res) => {
+//     let { task_id } = req.body;
+//     let data = await db.any(
+//         `SELECT * FROM "Task" WHERE "parentId" = $1 AND "progression" = 0`,
+//         [task_id]
+//     );
+//     let response = {
+//         message: "Todo data retrieved successfully",
+//         data: data,
+//     };
+//     res.status(200).json(response);
+// } );
+
+// router.route("/inprogress_extract").post(async (req, res) => {
+//     let { task_id } = req.body;
+//     let data = await db.any(
+//         `SELECT * FROM "Task" WHERE "parentId" = $1
+//         AND "progression" > 0
+//         AND "progression" < 100`,
+//         [task_id]
+//     );
+//     let response = {
+//         message: "Inprogress data retrieved successfully",
+//         data: data,
+//     };
+//     res.status(200).json(response);
+// } );
+
+// router.route("/completed_extract").post(async (req, res) => {
+//     let { task_id } = req.body;
+//     let data = await db.any(
+//         `SELECT * FROM "Task" WHERE "parentId" = $1 AND "progression" = 100`,
+//         [task_id]
+//     );
+//     let response = {
+//         message: "Completed data retrieved successfully",
+//         data: data,
+//     };
+//     res.status(200).json(response);
+// } );
+
+router.route("/all_leaf_tasks").post(async (req, res) => {
+    let { task_id } = req.body;
+
+    // Define an object to store the response data
+    let response = {
+        todo: [],
+        inprogress: [],
+        completed: [],
+    };
+
+    try {
+        // Execute all three queries using Promise.all
+        const [todoData, inprogressData, completedData] = await Promise.all([
+            db.any(
+                `SELECT * FROM "Task" WHERE "parentId" = $1 AND "progression" = 0`,
+                [task_id]
+            ),
+            db.any(
+                `SELECT * FROM "Task" WHERE "parentId" = $1 AND "progression" > 0 AND "progression" < 100`,
+                [task_id]
+            ),
+            db.any(
+                `SELECT * FROM "Task" WHERE "parentId" = $1 AND "progression" = 100`,
+                [task_id]
+            ),
+        ]);
+
+        // Assign retrieved data to corresponding properties in the response object
+        response.todo = todoData;
+        response.inprogress = inprogressData;
+        response.completed = completedData;
+
+        res.status(200).json({
+            message: "Tasks retrieved successfully",
+            data: response,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error retrieving tasks" });
+    }
+});
+
+
 module.exports = router;

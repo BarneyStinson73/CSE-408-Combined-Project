@@ -68,7 +68,7 @@
 </div> -->
 <script>
     import { Card } from 'flowbite-svelte';
-    import NavbarModule from './NavbarModule.svelte';
+    import NavbarModule from '../profile/NavbarModule.svelte';
     import { token } from '$lib/token.js';
     import { get } from 'svelte/store';
     import { goto } from '$app/navigation';

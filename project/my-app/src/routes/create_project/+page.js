@@ -1,12 +1,13 @@
-import { get } from 'svelte/store';
-import { token } from '$lib/token.js';
+// import { get } from 'svelte/store';
+// import { token } from '$lib/token.js';
 export const ssr = false;
 export async function load() {
 	const res = await fetch('http://localhost:3000/manager/project_creation_form', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			authorization: get(token)
+			// authorization: get(token)
+			authorization: localStorage.getItem('token') || ''
 		}
 	});
 	if (res.status == 401) {

@@ -6,7 +6,8 @@ export async function load() {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			authorization: get(token)
+			// authorization: get(token)
+			authorization: localStorage.getItem('token') || ''
 		}
 	});
 	if (res.status == 401) {

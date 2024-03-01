@@ -3,19 +3,21 @@ import { token } from '$lib/token.js';
 export const ssr = false;
 export async function load() {
 	// const redirectUrl = '/profile';
-	const res = await fetch('http://localhost:3000/manager/', {
+	const res = await fetch('http://localhost:3000/manager/all_leaf_tasks', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			authorization: get(token)
-		}
+			// authorization: get(token)
+			authorization: localStorage.getItem('token') || ''
+		},
+		body: JSON.stringify({task_id: '22'})
 	});
 
 	if (res.ok) {
 		const data = await res.json();
 		console.log(data);
 		if (data.success) {
-			alert('Notifications fetched successfully');
+			alert('All leaf fetched successfully');
 			// notifications = data;
 			// location.reload();
 		}

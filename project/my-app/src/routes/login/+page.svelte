@@ -3,8 +3,8 @@
 	import { Card, Button, Label, Input, Checkbox, TextPlaceholder, Textarea } from 'flowbite-svelte';
 	import { ButtonGroup, InputAddon, ToolbarButton } from 'flowbite-svelte';
 	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
-	import { token } from '$lib/token.js';
-	import { get } from 'svelte/store';
+	// import { token } from '$lib/token.js';
+	// import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	let show = false;
 	let show1 = false;
@@ -24,8 +24,10 @@
 		if (res.ok) {
 			const data = await res.json();
 			console.log('After sign in', data);
-			token.set(data.token);
-			console.log('Set token', data.token);
+			// token.set(data.token);
+			console.log('Before set token', localStorage.getItem('token'));
+			localStorage.setItem('token', `Bearer ${data.token}`); // `Bearer ${data.token}
+			console.log('Set token', localStorage.getItem('token'));
 			console.log(data);
 			if (data.success) {
 				goto(redirecturl);
