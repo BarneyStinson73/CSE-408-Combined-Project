@@ -17,6 +17,7 @@ export async function load({ params }) {
 	if (res.ok) {
 		const data = await res.json();
 		console.log(data);
+		
 		if (data.success) {
 			alert('All leaf fetched successfully');
 			// notifications = data;

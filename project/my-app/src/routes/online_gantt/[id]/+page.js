@@ -28,8 +28,9 @@
 import { get } from 'svelte/store';
 import { token } from '$lib/token.js';
 export const ssr = false;
-export async function load() {
+export async function load({ params }) {
 	// const redirectUrl = '/profile';
+	let task_id = params.id;
 	const res = await fetch('http://localhost:3000/manager/all_leaf_tasks', {
 		method: 'POST',
 		headers: {
@@ -37,7 +38,7 @@ export async function load() {
 			// authorization: get(token)
 			authorization: localStorage.getItem('token') || ''
 		},
-		body: JSON.stringify({ task_id: '22' })
+		body: JSON.stringify({ task_id: task_id })
 	});
 
 	if (res.ok) {

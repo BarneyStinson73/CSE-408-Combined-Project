@@ -1,7 +1,7 @@
 <!-- Inspiration https://s3-ap-southeast-2.amazonaws.com/focusbooster.cdn/Landing+pages/kanban-and-focusbooster/kanban-board-notion.png -->
 <script>
 	import { page } from '$app/stores';
-
+	import { goto } from '$app/navigation';
 	import {
 		BottomNav,
 		BottomNavItem,
@@ -20,7 +20,7 @@
 		UserCircleSolid,
 		PlusSolid
 	} from 'flowbite-svelte-icons';
-	import { ArrowRightFromBracketSolid } from 'svelte-awesome-icons';
+	import { ArrowRightFromBracketSolid ,ChartGanttSolid} from 'svelte-awesome-icons';
 	import NavbarModule from './NavbarModule.svelte';
 
 	let data = $page.data.data;
@@ -31,6 +31,8 @@
 	console.log(complete);
 	let inProgress = data.inprogress;
 	console.log(inProgress);
+	let id_for_gantt = $page.params.id;
+	console.log(id_for_gantt)
 
 	async function pushProgress(t) {
 		//console.log("In update Profile");
@@ -100,7 +102,19 @@
 </script>
 
 <NavbarModule />
-<div class="mx-20 mt-2 w-screen text-5xl font-bold">Kanban Board</div>
+<div class="mx-20 mt-2 w-screen text-5xl font-bold grid grid-cols-2 gap-20">
+	<div>
+	Kanban Board
+</div>
+<div class="flex flex-row justify-center">
+	<Button on:click={()=>
+		goto('/online_gantt/' + id_for_gantt ) 
+		}>
+		<ChartGanttSolid class="me-5 h-5 w-5" />
+		Gantt Chart
+	</Button>
+</div>
+</div>
 
 <div class="h-screen p-2">
 	<div class="grid h-full grid-cols-3 gap-5">
