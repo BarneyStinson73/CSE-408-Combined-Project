@@ -47,10 +47,10 @@
             // ],
             data: tasks.map((task) => {
               return {
-                x: task.name,
+                x: task.taskName,
                 y: [
-                  new Date(task.start_date).getTime(),
-                  new Date(task.end_date).getTime(),
+                  new Date(task.startTime).getTime(),
+                  new Date(task.endTime).getTime(),
                 ],
               };
             }),

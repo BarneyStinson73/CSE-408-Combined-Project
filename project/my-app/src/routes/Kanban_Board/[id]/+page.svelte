@@ -24,33 +24,86 @@
 	import NavbarModule from './NavbarModule.svelte';
 
 	let data = $page.data.data;
-
+	let task_id;
 	let todo = data.todo;
 	console.log(todo);
 	let complete = data.completed;
 	console.log(complete);
 	let inProgress = data.inprogress;
 	console.log(inProgress);
-	function handlePushtoProgress(t) {
-		todo = todo.filter((obj) => obj.id !== t.id);
-		let tempObj = { id: t.id, taskName: t.taskName, deadline: t.deadline };
-		inProgress = [...inProgress, tempObj];
+
+	async function pushProgress(t) {
+		//console.log("In update Profile");
+		const redirecturl = '/profile';
+		const res = await fetch('http://localhost:3000/manager/change_to_progress', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
+			},
+			body: JSON.stringify({ task_id })
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			console.log('pushed to progress:', data);
+			console.log(task_id);
+			if (data.failure) {
+				alert('Task Dependency Violated');
+				//goto(redirecturl)
+			} else {
+				//goto(redirecturl);
+				todo = todo.filter((obj) => obj.taskId !== t.taskId);
+				let tempObj = { id: t.id, taskName: t.taskName, deadline: t.deadline };
+				inProgress = [...inProgress, tempObj];
+			}
+		}
 	}
 
-	function handlePushtoComplete(t) {
-		inProgress = inProgress.filter((obj) => obj.taskName !== t.taskName);
-		let tempObj = { id: t.id, taskName: t.taskName, deadline: t.deadline };
-		complete = [...complete, tempObj];
+	async function pushCompleted(t) {
+		//console.log("In update Profile");
+		const redirecturl = '/profile';
+		const res = await fetch('http://localhost:3000/manager/change_to_completed', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
+			},
+			body: JSON.stringify({ task_id })
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			console.log('pushed to completed:', data);
+			console.log(task_id);
+			inProgress = inProgress.filter((obj) => obj.taskId !== t.taskIad);
+			let tempObj = { id: t.id, taskName: t.taskName, deadline: t.deadline };
+			complete = [...complete, tempObj];
+		}
+	}
+
+	async function handlePushtoProgress(t) {
+		task_id = t.taskId;
+		console.log(task_id);
+		pushProgress(t);
+	}
+
+	async function handlePushtoComplete(t) {
+		task_id = t.taskId;
+
+		pushCompleted(t);
 	}
 
 	let tasks = [];
 </script>
 
 <NavbarModule />
-<div class="w-screen text-5xl font-bold">Kanban Board</div>
+<div class="mx-20 mt-2 w-screen text-5xl font-bold">Kanban Board</div>
 
 <div class="h-screen p-2">
-	<div class="grid grid-cols-3 gap-5">
+	<div class="grid h-full grid-cols-3 gap-5">
 		<!-- To-do -->
 		<div class="rounded bg-white px-2 py-2">
 			<!-- board category header -->
@@ -68,7 +121,7 @@
 						<!-- <p class="bg-red-100 text-xs w-max p-1 rounded mr-2 text-gray-700">To-do</p> -->
 						<div class="mt-2 flex flex-row items-center">
 							<div class="mr-3 h-4 w-4 rounded-full bg-gray-300"></div>
-							<div class="text-md text-xs font-semibold text-gray-500">
+							<div class="text-md font-semibold text-gray-500">
 								Name of Task: {t.taskName}
 							</div>
 						</div>
@@ -91,7 +144,7 @@
 						</p>
 						<ArrowRightFromBracketSolid
 							class="absolute bottom-0 right-0 h-5 w-5"
-							on:click={() => handlePushtoComplete(t)}
+							on:click={() => handlePushtoProgress(t)}
 						/>
 					</div>
 				{/each}

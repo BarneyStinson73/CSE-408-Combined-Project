@@ -678,13 +678,78 @@ router.route("/all_leaf_tasks").post(async (req, res) => {
 router.route("/change_to_completed").post(async (req, res) => {
     let { task_id } = req.body;
     let data = await db.any(
-        `UPDATE "Task" SET "progression" = 100 WHERE "taskId" = $2`,
-        [ task_id]
+        `UPDATE "Task" SET "progression" = 100 WHERE "taskId" = $1`,
+        [task_id]
     );
     let response = {
         message: "Task pushed to completed successfully",
         data: data,
     };
     res.status(200).json(response);
-} );
+});
+
+// router.route("/change_to_progress").post(async (req, res) => {
+//     let { task_id } = req.body;
+//     let data = await db.any(
+//         `UPDATE "Task" SET "progression" = 25 WHERE "taskId" = $1`,
+//         [task_id]
+//     );
+//     let response = {
+//         message: "Task pushed to in progress successfully",
+//         data: data,
+//     };
+//     res.status(200).json(response);
+// });
+
+router.route("/change_to_progress").post(async (req, res) => {
+    let { task_id } = req.body;
+
+    try {
+        // Recursive query to find all upstream dependencies (ancestor tasks)
+        const query = `
+            WITH RECURSIVE upstream_tasks AS (
+                SELECT "masterId", "dependentId"
+                FROM "DependentTask"
+                WHERE "dependentId" = $1
+                UNION
+                SELECT d."masterId", d."dependentId"
+                FROM "DependentTask" d
+                JOIN upstream_tasks ut ON ut."masterId" = d."dependentId"
+            )
+            SELECT "taskId" FROM "Task" t
+            JOIN upstream_tasks ut ON t."taskId" = ut."masterId"
+            WHERE t."progression" < 100;
+        `;
+
+        const unfinishedDependencies = await db.any(query, [task_id]);
+
+        // If there are unfinished upstream tasks, reject the update
+        if (unfinishedDependencies.length > 0) {
+            return res.status(200).json({
+                message:
+                    "Cannot proceed to in progress. There are unfinished upstream dependent tasks.",
+
+                failure: true,
+            });
+        }
+
+        // If all dependencies are finished, update the task progression
+        await db.any(
+            `UPDATE "Task" SET "progression" = 25 WHERE "taskId" = $1`,
+            [task_id]
+        );
+
+        // Respond with success message
+        res.status(200).json({
+            message: "Task pushed to in progress successfully",
+        });
+    } catch (error) {
+        console.error("Error updating task progression:", error);
+        res.status(500).json({
+            message: "Internal server error",
+            failure: true,
+        });
+    }
+});
+
 module.exports = router;

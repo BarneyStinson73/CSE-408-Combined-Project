@@ -55,8 +55,9 @@
 	import Header from './Header.svelte';
 	import './styles.css';
 	import NavbarModule from './profile/profile/NavbarModule.svelte';
-	import {navigating} from '$app/stores';
-	import { Diamonds } from 'svelte-loading-spinners';
+	import { navigating } from '$app/stores';
+	// import { Diamonds, BarLoader } from 'svelte-loading-spinners';
+	import { Spinner } from 'flowbite-svelte';
 </script>
 
 <div>
@@ -64,14 +65,13 @@
 	<!-- <NavbarModule></NavbarModule> -->
 	<main>
 		{#if $navigating}
-		<div class="flex justify-center items-center h-screen">
-			<Diamonds size="60" color="#FF3E00" unit="px" duration="1s" position="absolute" top="50%" left="50%" transform="translate(-50%, -50%)" />
-		</div>
+			<div class="flex h-screen items-center justify-center">
+				<!-- <Diamonds size="60" color="#FF3E00" unit="px" duration="1s" /> -->
+				<!-- <BarLoader size="60" color="#FF3E00" /> -->
+			<div class="text-center"><Spinner /></div>
+			</div>
 		{:else}
-		<slot />
+			<slot />
 		{/if}
-		
-
-		
 	</main>
 </div>
