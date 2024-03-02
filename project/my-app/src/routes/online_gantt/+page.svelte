@@ -1,8 +1,12 @@
 <script>
   import { onMount, onDestroy } from "svelte";
+  import {page} from '$app/stores';
 
   let chartContainer;
   let chart; // Declare chart here to ensure it's accessible in onDestroy
+  let data=$page.data;
+  let tasks = [...data.data.inprogress, ...data.data.completed];
+  console.log(tasks);
 
   onMount(() => {
     // Dynamically import ApexCharts to ensure it's only loaded client-side
@@ -18,29 +22,38 @@
         },
         series: [
           {
-            data: [
-              {
-                x: "Task 1",
+            // data: [
+            //   {
+            //     x: "Task 1",
+            //     y: [
+            //       new Date("2021-02-01").getTime(),
+            //       new Date("2021-02-10").getTime(),
+            //     ],
+            //   },
+            //   {
+            //     x: "Task 2",
+            //     y: [
+            //       new Date("2021-02-05").getTime(),
+            //       new Date("2021-02-14").getTime(),
+            //     ],
+            //   },
+            //   {
+            //     x: "Task 3",
+            //     y: [
+            //       new Date("2021-02-20").getTime(),
+            //       new Date("2021-02-28").getTime(),
+            //     ],
+            //   },
+            // ],
+            data: tasks.map((task) => {
+              return {
+                x: task.name,
                 y: [
-                  new Date("2021-02-01").getTime(),
-                  new Date("2021-02-10").getTime(),
+                  new Date(task.start_date).getTime(),
+                  new Date(task.end_date).getTime(),
                 ],
-              },
-              {
-                x: "Task 2",
-                y: [
-                  new Date("2021-02-05").getTime(),
-                  new Date("2021-02-14").getTime(),
-                ],
-              },
-              {
-                x: "Task 3",
-                y: [
-                  new Date("2021-02-20").getTime(),
-                  new Date("2021-02-28").getTime(),
-                ],
-              },
-            ],
+              };
+            }),
           },
         ],
         xaxis: {

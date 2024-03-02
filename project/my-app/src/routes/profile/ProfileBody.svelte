@@ -1,6 +1,13 @@
 <script>
 	import {
-		Sidebar,SidebarGroup,SidebarItem,SidebarWrapper,Label,Input,Checkbox,A
+		Sidebar,
+		SidebarGroup,
+		SidebarItem,
+		SidebarWrapper,
+		Label,
+		Input,
+		Checkbox,
+		A
 	} from 'flowbite-svelte';
 	import {
 		LockOpenSolid,
@@ -43,6 +50,7 @@
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	// let name = "John Doe";
 	let name = $page.data.user_data[0].userName;
@@ -139,6 +147,7 @@
 	let selected_tag = [];
 	let selected_collaborator = [];
 	let selected_sp_collaborator = [];
+
 	async function task_creation() {
 		const res = await fetch('http://localhost:3000/manager/create_task', {
 			method: 'POST',
@@ -188,10 +197,11 @@
 			}
 		}
 	}
+
 	async function task_task_manager() {}
 
 	let selected_task_id = '';
-	tasks2 = task_details();
+
 	async function task_details() {
 		const res = await fetch('http://localhost:3000/manager/task_details', {
 			method: 'POST',
@@ -200,7 +210,7 @@
 				// authorization: get(token)
 				authorization: localStorage.getItem('token') || ''
 			},
-			body: JSON.stringify({ selected_task_id })
+			body: JSON.stringify({ task_id: selected_task_id })
 		});
 
 		if (res.ok) {
@@ -216,11 +226,14 @@
 	}
 	let project_id = 1;
 	let token_now;
+
 	onMount(() => {
 		token_now = localStorage.getItem('token');
 		console.log('Token On Mount:', token_now);
 	});
-	let project_details = project_task_details();
+
+	let project_details;
+
 	async function project_task_details() {
 		console.log('In project_task_details', project_id);
 		console.log('Token Before:', token_now);
@@ -238,6 +251,7 @@
 		console.log('Token After:', localStorage.getItem('token'));
 		if (res.ok) {
 			const data = await res.json();
+			console.log(data);
 			// token.set(data.token);
 			// console.log(data.success);
 			if (data.success) {
@@ -395,7 +409,7 @@
 							<Checkbox class="mb-6 space-x-1 rtl:space-x-reverse" required>
 								I agree with the <A
 									href="/"
-									class="text-primary-700 dark:text-primary-600 hover:underline"
+									class="text-primary-700 hover:underline dark:text-primary-600"
 									>terms and conditions</A
 								>.
 							</Checkbox>
@@ -408,113 +422,105 @@
 			</SidebarWrapper>
 		</Sidebar>
 	</div>
-	<div class="ml-10 mt-10 grid flex-grow grid-cols-3 gap-2">
+	<div class="mx-10 my-10 grid flex-grow auto-rows-min grid-cols-3 gap-2">
 		{#each projectData as project, i}
 			{#if i < count}
-				<div class="grid md:grid-cols-2">
-					<div class="mr-0">
-						<Card class="w-full m-auto">
-							<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-								{project.projectName}
-							</h5>
-							<p class="mb-3 font-normal leading-tight text-gray-700 dark:text-gray-400">
-								Deadline:
-								{new Date(project.deadline).toLocaleTimeString([], {
-									hour: 'numeric',
-									minute: 'numeric'
-								}) +
-									', ' +
-									new Date(project.deadline).toLocaleDateString([], {
-										day: 'numeric',
-										month: 'long',
-										year: 'numeric'
-									})}
-							</p>
+				<Card class="w-full ">
+					<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+						{project.projectName}
+					</h5>
+					<p class="mb-3 font-normal leading-tight text-gray-700 dark:text-gray-400">
+						Deadline:
+						{new Date(project.deadline).toLocaleTimeString([], {
+							hour: 'numeric',
+							minute: 'numeric'
+						}) +
+							', ' +
+							new Date(project.deadline).toLocaleDateString([], {
+								day: 'numeric',
+								month: 'long',
+								year: 'numeric'
+							})}
+					</p>
 
-							<Progressbar
-								progress={project.progression}
-								size="h-4"
-								labelInside
-								style="background-color: lime"
-							/>
-							<br />
-							<div class="grid grid-cols-2 gap-4">
-								<Button
-									class="w-fit"
-									style="background-color: green"
-									on:click={() => {
-										project_id = project.projectId;
-										project_task_details().then((data) => {
-											console.log('Project Details After Button Click:', data);
-											project_details = data;
-											projectModal = true;
-										});
-									}}
-								>
-									Details <ArrowRightOutline class="ms-2 h-3.5 w-3.5 text-white" />
-								</Button>
-								<Button on:click={() => (formModal = true)}>Create New Task</Button>
-							</div>
-							<Modal bind:open={formModal} size="md" autoclose={false} class="w-full">
-								<form
-									class="h-full rounded bg-blue-100 px-10"
-									on:submit|preventDefault={task_creation}
-								>
-									<h1 class="text-center">New Task</h1>
-									<hr />
-									<div class="my-4">
-										<Label for="email" class="mb-2">Task Name</Label>
-										<Input
-											type="text"
-											id="name"
-											placeholder="Sample Task"
-											required
-											bind:value={task_name}
-										/>
-									</div>
-									<div class="my-6">
-										<Label
-											>Task Manager
-											<Select class="mt-2" items={managers} bind:value={selected_manager} />
-										</Label>
-									</div>
-									<div class="mb-6">
-										<Label for="last_name" class="mb-2">Tags</Label>
-										<MultiSelect items={tags} bind:value={selected_tag} />
-									</div>
-									<div class="mb-6">
-										<Label for="last_name" class="mb-2">Collaborators</Label>
-										<MultiSelect items={collaborators} bind:value={selected_collaborator} />
-									</div>
-									<div class="mb-4 grid gap-6 md:grid-cols-2">
-										<div>
-											<Label for="last_name" class="mb-2">Start Date</Label>
-											<Input
-												type="date"
-												id="last_name"
-												placeholder="Doe"
-												required
-												bind:value={start_date}
-											/>
-										</div>
-										<div>
-											<Label for="last_name" class="mb-2">Expiration Date</Label>
-											<Input
-												type="date"
-												id="last_name"
-												placeholder="Doe"
-												required
-												bind:value={deadline}
-											/>
-										</div>
-									</div>
-									<Button type="submit">Submit</Button>
-								</form>
-							</Modal>
-						</Card>
+					<Progressbar
+						progress={project.progression}
+						size="h-4"
+						labelInside
+						style="background-color: lime"
+					/>
+					<br />
+					<div class="grid grid-cols-2 gap-4">
+						<Button
+							class="w-fit"
+							style="background-color: green"
+							on:click={() => {
+								project_id = project.projectId;
+								project_task_details().then((data) => {
+									console.log('Project Details After Button Click:', data);
+									project_details = data;
+									projectModal = true;
+								});
+							}}
+						>
+							Details <ArrowRightOutline class="ms-2 h-3.5 w-3.5 text-white" />
+						</Button>
+						<Button on:click={() => (formModal = true)}>Create New Task</Button>
 					</div>
-					<div class="my-10"></div>
-				</div>
+					<Modal bind:open={formModal} size="md" autoclose={false} class="w-full">
+						<form class="h-full rounded bg-blue-100 px-10" on:submit|preventDefault={task_creation}>
+							<h1 class="text-center">New Task</h1>
+							<hr />
+							<div class="my-4">
+								<Label for="email" class="mb-2">Task Name</Label>
+								<Input
+									type="text"
+									id="name"
+									placeholder="Sample Task"
+									required
+									bind:value={task_name}
+								/>
+							</div>
+							<div class="my-6">
+								<Label
+									>Task Manager
+									<Select class="mt-2" items={managers} bind:value={selected_manager} />
+								</Label>
+							</div>
+							<div class="mb-6">
+								<Label for="last_name" class="mb-2">Tags</Label>
+								<MultiSelect items={tags} bind:value={selected_tag} />
+							</div>
+							<div class="mb-6">
+								<Label for="last_name" class="mb-2">Collaborators</Label>
+								<MultiSelect items={collaborators} bind:value={selected_collaborator} />
+							</div>
+							<div class="mb-4 grid gap-6 md:grid-cols-2">
+								<div>
+									<Label for="last_name" class="mb-2">Start Date</Label>
+									<Input
+										type="date"
+										id="last_name"
+										placeholder="Doe"
+										required
+										bind:value={start_date}
+									/>
+								</div>
+								<div>
+									<Label for="last_name" class="mb-2">Expiration Date</Label>
+									<Input
+										type="date"
+										id="last_name"
+										placeholder="Doe"
+										required
+										bind:value={deadline}
+									/>
+								</div>
+							</div>
+							<Button type="submit">Submit</Button>
+						</form>
+					</Modal>
+				</Card>
 			{/if}
 		{/each}
 	</div>
@@ -525,20 +531,20 @@
 		{#each showing_tasks as task}
 			<Card class="m-auto w-full">
 				<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-					{task.name}
+					{task.taskName}
 				</h5>
 				<p class="mb-3 font-normal leading-tight text-gray-700 dark:text-gray-400">
-					Deadline: 
+					Deadline:
 					{new Date(task.deadline).toLocaleTimeString([], {
-									hour: 'numeric',
-									minute: 'numeric'
-								}) +
-									', ' +
-									new Date(task.deadline).toLocaleDateString([], {
-										day: 'numeric',
-										month: 'long',
-										year: 'numeric'
-									})}
+						hour: 'numeric',
+						minute: 'numeric'
+					}) +
+						', ' +
+						new Date(task.deadline).toLocaleDateString([], {
+							day: 'numeric',
+							month: 'long',
+							year: 'numeric'
+						})}
 				</p>
 
 				<Progressbar
@@ -553,18 +559,13 @@
 						class="w-fit"
 						style="background-color: green"
 						on:click={() => {
-							
 							// selected_task_id = task.taskId;
 							// console.log('Selected task ID:', selected_task_id);
-							
-
 							// task_details().then((data)=>{
 							// 	console.log('working on retrieving child tasks',data);
 							// 	tasks = data;
 							// 	defaultModal = true;
 							// })
-
-
 						}}>Details</Button
 					>
 
@@ -587,20 +588,17 @@
 					</h5>
 					<p class="mb-3 font-normal leading-tight text-gray-700 dark:text-gray-400">
 						Deadline:
-					
-					
-					{new Date(proj.deadline).toLocaleTimeString([], {
-									hour: 'numeric',
-									minute: 'numeric'
-								}) +
-									', ' +
-									new Date(proj.deadline).toLocaleDateString([], {
-										day: 'numeric',
-										month: 'long',
-										year: 'numeric'
-									})}
-					
-					
+
+						{new Date(proj.deadline).toLocaleTimeString([], {
+							hour: 'numeric',
+							minute: 'numeric'
+						}) +
+							', ' +
+							new Date(proj.deadline).toLocaleDateString([], {
+								day: 'numeric',
+								month: 'long',
+								year: 'numeric'
+							})}
 					</p>
 
 					<Progressbar
@@ -621,14 +619,20 @@
 								// showing_tasks = tasks2;
 								console.log('Tasks:', tasks2);
 								console.log('showing_tasks:', showing_tasks);
-								task_details().then((data)=>{
-								console.log('working on retrieving child tasks',data);
-								tasks = data;
-								defaultModal = true;
-							})
+								if (proj.isLeaf) {
+									goto('/Kanban_Board/' + proj.parentId);
+								}
 
-								
-
+								task_details().then((data) => {
+									console.log('working on retrieving child tasks', data);
+									showing_tasks = data;
+									project_details = data;
+									if (project_details.length == 0) {
+										goto('/Kanban_Board/' + selected_task_id);
+									}
+									// projectModal = false;
+									// defaultModal = true;
+								});
 							}}>Details</Button
 						>
 
@@ -642,16 +646,6 @@
 	</div></Modal
 >
 
-<style>
-	.imageSize {
-		width: 150px;
-		height: 100 px;
-		border-radius: 50%;
-		padding-left: 10 px;
-	}
-</style>
-
-
 <!-- 
 selected_task_id = task.taskId;
 							// console.log('Selected task ID:', selected_task_id);
@@ -662,3 +656,12 @@ selected_task_id = task.taskId;
 								tasks = data;
 								defaultModal = true;
 							}) -->
+
+<style>
+	.imageSize {
+		width: 150px;
+		height: 100 px;
+		border-radius: 50%;
+		padding-left: 10 px;
+	}
+</style>
