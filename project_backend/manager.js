@@ -575,7 +575,7 @@ router.route("/project_task_details").post(async (req, res) => {
     let { project_id } = req.body;
     try {
         let data = await db.any(
-            `SELECT p."taskId", p."projectId", t."taskName", t."progression", t."deadline", t."parentId"
+            `SELECT p."taskId", p."projectId", t."taskName", t."progression", t."deadline", t."parentId",t."isLeaf"
 FROM "ProjectTask" p INNER JOIN "Task" t ON p."taskId" = t."taskId" WHERE p."projectId" = $1`,
             [project_id]
         );
@@ -675,5 +675,16 @@ router.route("/all_leaf_tasks").post(async (req, res) => {
     }
 });
 
-
+router.route("/change_to_completed").post(async (req, res) => {
+    let { task_id } = req.body;
+    let data = await db.any(
+        `UPDATE "Task" SET "progression" = 100 WHERE "taskId" = $2`,
+        [ task_id]
+    );
+    let response = {
+        message: "Task pushed to completed successfully",
+        data: data,
+    };
+    res.status(200).json(response);
+} );
 module.exports = router;

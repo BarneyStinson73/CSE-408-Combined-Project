@@ -28,6 +28,7 @@
 	} from 'flowbite-svelte';
 
 	import { Modal } from 'flowbite-svelte';
+	import { Jumper } from 'svelte-loading-spinners';
 
 	import { ArrowRightOutline } from 'flowbite-svelte-icons';
 	import { token } from '$lib/token.js';
@@ -425,7 +426,7 @@
 	<div class="mx-10 my-10 grid flex-grow auto-rows-min grid-cols-3 gap-2">
 		{#each projectData as project, i}
 			{#if i < count}
-				<Card class="w-full ">
+				<Card class="w-full max-w-full">
 					<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
 						{project.projectName}
 					</h5>
@@ -529,7 +530,7 @@
 <Modal title="Tasks" bind:open={defaultModal} autoclose={false} outsideclose>
 	<div class="grid grid-cols-2 gap-4">
 		{#each showing_tasks as task}
-			<Card class="m-auto w-full">
+			<Card class="m-auto w-full max-w-full">
 				<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
 					{task.taskName}
 				</h5>
@@ -582,7 +583,7 @@
 	<div class="grid grid-cols-2 gap-4">
 		{#if project_details}
 			{#each project_details as proj}
-				<Card class="m-auto w-full">
+				<Card class="m-auto w-full max-w-full">
 					<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
 						{proj.taskName}
 					</h5>
@@ -619,20 +620,18 @@
 								// showing_tasks = tasks2;
 								console.log('Tasks:', tasks2);
 								console.log('showing_tasks:', showing_tasks);
+								console.log('Project:', proj);
 								if (proj.isLeaf) {
 									goto('/Kanban_Board/' + proj.parentId);
+								} else {
+									task_details().then((data) => {
+										console.log('working on retrieving child tasks', data);
+										showing_tasks = data;
+										project_details = data;
+										// projectModal = false;
+										// defaultModal = true;
+									});
 								}
-
-								task_details().then((data) => {
-									console.log('working on retrieving child tasks', data);
-									showing_tasks = data;
-									project_details = data;
-									if (project_details.length == 0) {
-										goto('/Kanban_Board/' + selected_task_id);
-									}
-									// projectModal = false;
-									// defaultModal = true;
-								});
 							}}>Details</Button
 						>
 

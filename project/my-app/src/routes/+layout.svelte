@@ -55,12 +55,23 @@
 	import Header from './Header.svelte';
 	import './styles.css';
 	import NavbarModule from './profile/profile/NavbarModule.svelte';
+	import {navigating} from '$app/stores';
+	import { Diamonds } from 'svelte-loading-spinners';
 </script>
 
 <div>
 	<!-- <Header></Header> -->
 	<!-- <NavbarModule></NavbarModule> -->
 	<main>
+		{#if $navigating}
+		<div class="flex justify-center items-center h-screen">
+			<Diamonds size="60" color="#FF3E00" unit="px" duration="1s" position="absolute" top="50%" left="50%" transform="translate(-50%, -50%)" />
+		</div>
+		{:else}
 		<slot />
+		{/if}
+		
+
+		
 	</main>
 </div>
