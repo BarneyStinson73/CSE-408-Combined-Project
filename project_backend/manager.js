@@ -319,8 +319,8 @@ router.route("/project/create_task").post( async (req, res) => {
     );
     task_users.forEach(async (user) => {
         await db.any(
-            `INSERT INTO "TaskEmployee" ("projectId","taskId","userId") VALUES ($1, $2,$3)`,
-            [project_id, data[0].taskId, user]
+            `INSERT INTO "TaskEmployee" ("taskId","userId") VALUES ($1, $2)`,
+            [data[0].taskId, user]
         );
     });
     task_tags.forEach(async (tag) => {
@@ -335,6 +335,11 @@ router.route("/project/create_task").post( async (req, res) => {
             [dependency, data[0].taskId]
         );
     });
+    await db.any(
+        `INSERT INTO "ProjectTask" ("projectId","taskId") VALUES ($1, $2)`,
+        [project_id, data[0].taskId]
+    );
+
     let response = {
         message: "Task created successfully",
         data: data,
@@ -348,24 +353,39 @@ router.route("/task/create_task").post(async (req, res) => {
         task_name,
         task_manager,
         task_users,
+        task_tags,
         start_date,
         deadline,
     } = req.body;
 
     let data = await db.any(
-        `INSERT INTO "Task" ("taskName","startTime","deadline") VALUES ($1, $2, $3) returning "tasktId"`,
-        [task_name, start_date, deadline]
+        `INSERT INTO "Task" ("taskName","startTime","deadline","parentId") VALUES ($1, $2, $3,$4) returning "taskId"`,
+        [task_name, start_date, deadline,parent_task_id]
     );
     await db.any(
         `INSERT INTO "TaskManager" ("taskId","userId") VALUES ($1, $2)`,
         [data[0].taskId, task_manager]
     );
+    // task_users.forEach(async (user) => {
+    //     await db.any(
+    //         `INSERT INTO "ProjectUser" ("projectId","userId") VALUES ($1, $2)`,
+    //         [data[0].projectId, user]
+    //     );
+    // });
     task_users.forEach(async (user) => {
         await db.any(
-            `INSERT INTO "ProjectUser" ("projectId","userId") VALUES ($1, $2)`,
-            [data[0].projectId, user]
+            `INSERT INTO "TaskEmployee" ("taskId","userId") VALUES ($1, $2)`,
+            [data[0].taskId, user]
         );
     });
+    
+    task_tags.forEach(async (tag) => {
+        await db.any(
+            `INSERT INTO "TaskTag" ("taskId","tagId") VALUES ($1, $2)`,
+            [data[0].taskId, tag]
+        );
+    });
+
     let response = {
         message: "Task created successfully",
         data: data,
@@ -450,7 +470,7 @@ router.route("/project_admins").post(async (req, res) => {
     await db
         .any(
             `SELECT "User"."userId", "User"."userName" FROM "ProjectUser" INNER JOIN "User" ON "ProjectUser"."userId" = "User"."userId" WHERE "ProjectUser"."projectId" = $1 AND "User"."type" = 'admin'`,
-            [projectId]
+            [project_id]
         )
         .then((data) => {
             let response = {
@@ -508,7 +528,74 @@ router.route("/task_tags").post(async (req, res) => {
         res.status(500).json({ message: "Error retrieving task tags" });
     }
 });
+router.route("/project_tags").post(async (req, res) => {
+    let { project_id } = req.body;
+    try {
+        const data = await db.any(
+            `SELECT "Tags"."tagId", "Tags"."tagName"
+         FROM "ProjectTag"
+            INNER JOIN "Tags" ON "ProjectTag"."tagId" = "Tags"."tagId"
+            WHERE "ProjectTag"."projectId" = $1`,
+            [project_id]
+        );
 
+        const response = {
+            message: "Project tags retrieved successfully",
+            data: data,
+        };
+        res.status(200).json(response);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error retrieving project tags" });
+    }
+}
+);
+router.route("/project_collaborators").post(async (req, res) => {
+    let { project_id } = req.body;
+
+    try {
+        const data = await db.any(
+            `SELECT "User"."userId", "User"."userName"
+       FROM "ProjectUser"
+       INNER JOIN "User" ON "ProjectUser"."userId" = "User"."userId"
+       WHERE "ProjectUser"."projectId" = $1`,
+            [project_id]
+        );
+
+        const response = {
+            message: "Project collaborators retrieved successfully",
+            data: data,
+        };
+        res.status(200).json(response);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error retrieving project employees" });
+    }
+} );
+
+router.route("/project/task_dependencies").post(async (req, res) => {
+    // take projectId,then join projecttask and task table to get taskid and taskname
+    let { project_id } = req.body;
+    try {
+        let data = await db.any(
+            `SELECT pt."taskId", t."taskName"
+       FROM "ProjectTask" pt
+       INNER JOIN "Task" t ON pt."taskId" = t."taskId"
+       WHERE pt."projectId" = $1`,
+            [project_id]
+        );
+
+        const response = {
+            message: "Project task dependencies retrieved successfully",
+            data: data,
+        };
+        res.status(200).json(response);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error retrieving project task dependencies" });
+    }
+} );
 router.route("/task_collaborators").post(async (req, res) => {
     let { task_id } = req.body;
 

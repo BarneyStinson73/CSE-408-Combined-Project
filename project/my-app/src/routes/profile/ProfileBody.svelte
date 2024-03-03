@@ -73,6 +73,7 @@
 	let contact = '';
 	let prev_password = '';
 	let new_password = '';
+	let parent_project_id = '';
 
 	async function updatePassword() {
 		const redirecturl = 'http://localhost:3000/manager/profile';
@@ -142,6 +143,7 @@
 	console.log('Tags:', tags);
 	let managers = [];
 	let collaborators = [];
+	let dependencies = [];
 	let tasks = [];
 	let tasks2 = [];
 	let showing_tasks = tasks;
@@ -149,13 +151,11 @@
 	let selected_tag = [];
 	let selected_collaborator = [];
 	let selected_sp_collaborator = [];
-	let selected_dependency=[];
-
-
+	let selected_dependency = [];
 
 	let sub_tasks = [];
 	let parent_task_id = '';
-	async function dependency_tasks_list(){
+	async function dependency_tasks_list() {
 		const res = await fetch('http://localhost:3000/manager/task_details', {
 			method: 'POST',
 			headers: {
@@ -163,7 +163,7 @@
 				// authorization: get(token)
 				authorization: localStorage.getItem('token') || ''
 			},
-			body: JSON.stringify({ parent_task_id })
+			body: JSON.stringify({ task_id: parent_task_id })
 		});
 
 		if (res.ok) {
@@ -176,10 +176,32 @@
 			}
 			return data.data;
 		}
-	
+	}
+
+	async function project_task_dependency() {
+		const res = await fetch('http://localhost:3000/manager/project/task_dependencies', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
+			},
+			body: JSON.stringify({ project_id: parent_project_id })
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			// token.set(data.token);
+			console.log('Project Tasks:', data);
+			// console.log(data.success);
+			if (data.success) {
+				alert('Project tasks are retrieved');
+			}
+			return data.data;
+		}
 	}
 	async function task_creation() {
-		const res = await fetch('http://localhost:3000/manager/create_task', {
+		const res = await fetch('http://localhost:3000/manager/task/create_task', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -187,13 +209,13 @@
 				authorization: localStorage.getItem('token') || ''
 			},
 			body: JSON.stringify({
-				parent_task_id,
-				task_name,
-				selected_manager,
-				selected_tag,
-				selected_collaborator,
-				start_date,
-				deadline
+				parent_task_id: parent_task_id,
+				task_name: task_name,
+				task_manager: selected_manager,
+				task_tags: selected_tag,
+				task_users: selected_collaborator,
+				start_date: start_date,
+				deadline: deadline
 			})
 		});
 
@@ -204,10 +226,11 @@
 				alert('Task Created Successfully');
 				location.reload();
 			}
+			return data.data;
 		}
 	}
 
-	async function task_creation_project(){
+	async function task_creation_project() {
 		const res = await fetch('http://localhost:3000/manager/project/create_task', {
 			method: 'POST',
 			headers: {
@@ -216,13 +239,14 @@
 				authorization: localStorage.getItem('token') || ''
 			},
 			body: JSON.stringify({
-				task_name,
-				selected_manager,
-				selected_tag,
-				selected_collaborator,
-				selected_dependency,
-				start_date,
-				deadline
+				project_id: parent_project_id,
+				task_name: task_name,
+				task_manager: selected_manager,
+				task_tags: selected_tag,
+				task_users: selected_collaborator,
+				task_dependency: selected_dependency,
+				start_date: start_date,
+				deadline: deadline
 			})
 		});
 
@@ -233,8 +257,8 @@
 				alert('Task Created Successfully');
 				location.reload();
 			}
+			return data.data;
 		}
-	
 	}
 	async function project_task_manager() {
 		const res = await fetch('http://localhost:3000/manager/project_admins', {
@@ -244,17 +268,40 @@
 				// authorization: get(token)
 				authorization: localStorage.getItem('token') || ''
 			},
-			body: JSON.stringify({ managers })
+			body: JSON.stringify({ project_id: parent_project_id })
 		});
 
 		if (res.ok) {
 			const data = await res.json();
-			token.set(data.token);
+			// token.set(data.token);
 			console.log('Project Admins:', data);
 			// console.log(data.success);
 			if (data.success) {
 				alert('Project admins are retrieved');
 			}
+			return data.data;
+		}
+	}
+	async function project_task_tags() {
+		const res = await fetch('http://localhost:3000/manager/project_tags', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
+			},
+			body: JSON.stringify({ project_id: parent_project_id })
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			// token.set(data.token);
+			console.log('Project Tags:', data);
+			// console.log(data.success);
+			if (data.success) {
+				alert('Project tags are retrieved');
+			}
+			return data.data;
 		}
 	}
 
@@ -266,21 +313,22 @@
 				// authorization: get(token)
 				authorization: localStorage.getItem('token') || ''
 			},
-			body: JSON.stringify({ managers })
+			body: JSON.stringify({ task_id: parent_task_id })
 		});
 
 		if (res.ok) {
 			const data = await res.json();
-			token.set(data.token);
+			// token.set(data.token);
 			console.log('Task Admins:', data);
 			// console.log(data.success);
 			if (data.success) {
 				alert('Task admins are retrieved');
 			}
+			return data.data;
 		}
 	}
 
-	async function task_task_tags(){
+	async function task_task_tags() {
 		const res = await fetch('http://localhost:3000/manager/task_tags', {
 			method: 'POST',
 			headers: {
@@ -288,22 +336,22 @@
 				// authorization: get(token)
 				authorization: localStorage.getItem('token') || ''
 			},
-			body: JSON.stringify({ tags })
+			body: JSON.stringify({ task_id: parent_task_id })
 		});
 
 		if (res.ok) {
 			const data = await res.json();
-			token.set(data.token);
+			// token.set(data.token);
 			console.log('Task Tags:', data);
 			// console.log(data.success);
 			if (data.success) {
 				alert('Task tags are retrieved');
 			}
+			return data.data;
 		}
-
 	}
 
-	async function task_task_collaborators(){
+	async function task_task_collaborators() {
 		const res = await fetch('http://localhost:3000/manager/task_collaborators', {
 			method: 'POST',
 			headers: {
@@ -311,17 +359,41 @@
 				// authorization: get(token)
 				authorization: localStorage.getItem('token') || ''
 			},
-			body: JSON.stringify({ collaborators })
+			body: JSON.stringify({ task_id: parent_task_id })
 		});
 
 		if (res.ok) {
 			const data = await res.json();
-			token.set(data.token);
+			// token.set(data.token);
 			console.log('Task Collaborators:', data);
 			// console.log(data.success);
 			if (data.success) {
 				alert('Task collaborators are retrieved');
 			}
+			return data.data;
+		}
+	}
+
+	async function project_task_collaborators() {
+		const res = await fetch('http://localhost:3000/manager/project_collaborators', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
+			},
+			body: JSON.stringify({ project_id: parent_project_id })
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			// token.set(data.token);
+			console.log('Project Collaborators:', data);
+			// console.log(data.success);
+			if (data.success) {
+				alert('Project collaborators are retrieved');
+			}
+			return data.data;
 		}
 	}
 
@@ -360,9 +432,9 @@
 	let project_details;
 
 	async function project_task_details() {
-		console.log('In project_task_details', project_id);
-		console.log('Token Before:', token_now);
-		console.log('Token Now:', localStorage.getItem('token'));
+		console.log('In project_task_details,project id', project_id);
+		// console.log('Token Before:', token_now);
+		// console.log('Token Now:', localStorage.getItem('token'));
 		const res = await fetch('http://localhost:3000/manager/project_task_details', {
 			method: 'POST',
 			headers: {
@@ -373,7 +445,7 @@
 			body: JSON.stringify({ project_id })
 		});
 
-		console.log('Token After:', localStorage.getItem('token'));
+		// console.log('Token After:', localStorage.getItem('token'));
 		if (res.ok) {
 			const data = await res.json();
 			console.log(data);
@@ -399,11 +471,11 @@
 		/>
 	</div>
 	<div class=" mt-8 pb-10">
-		<p class="font-bold text-lg">Name:{name}</p>
-		<p class="font-bold text-lg">Contact No:{contantNo}</p>
-		<p class="font-bold text-lg">Status: {type.charAt(0).toUpperCase() + type.slice(1)}</p>
-		<p class="font-bold text-lg">Email:{user_email}</p>
-		<p class="font-bold text-lg">Currently Available:{Currently_available ? 'Yes' : 'No'}</p>
+		<p class="text-lg font-bold">Name:{name}</p>
+		<p class="text-lg font-bold">Contact No:{contantNo}</p>
+		<p class="text-lg font-bold">Status: {type.charAt(0).toUpperCase() + type.slice(1)}</p>
+		<p class="text-lg font-bold">Email:{user_email}</p>
+		<p class="text-lg font-bold">Currently Available:{Currently_available ? 'Yes' : 'No'}</p>
 	</div>
 </div>
 <div class="flex flex-row">
@@ -430,7 +502,7 @@
 						{/each}
 					</Tooltip>
 					<SidebarGroup border></SidebarGroup>
-					<button on:click={() => (defModal = true)}>
+					<button on:click|preventDefault={() => (defModal = true)}>
 						<SidebarItem label="Update Profile" class="mt-5 pb-5">
 							<svelte:fragment slot="icon">
 								<UserSolid
@@ -489,7 +561,7 @@
 						</form></Modal
 					>
 
-					<button on:click={() => (fModal = true)}>
+					<button on:click|preventDefault={() => (fModal = true)}>
 						<SidebarItem label="Update Password" class="mt-5 pb-5">
 							<svelte:fragment slot="icon">
 								<LockOpenSolid
@@ -590,10 +662,46 @@
 						>
 							Details <ArrowRightOutline class="ms-2 h-3.5 w-3.5 text-white" />
 						</Button>
-						<Button on:click={() => (formModal = true)}>Create New Task</Button>
+						<Button
+							on:click={() => {
+								formModal = true;
+								parent_project_id = project.projectId;
+
+								project_task_manager().then((data) => {
+									console.log('Project Admins:', data);
+									managers = data;
+									managers = managers.map((tt) => ({ value: tt.userId, name: tt.userName }));
+								});
+
+								project_task_tags().then((data) => {
+									console.log('Project Tags:', data);
+									tags = data;
+									tags = tags.map((tt) => ({ value: tt.tagId, name: tt.tagName }));
+								});
+								project_task_collaborators().then((data) => {
+									console.log('Project Collaborators:', data);
+									collaborators = data;
+									collaborators = collaborators.map((tt) => ({
+										value: tt.userId,
+										name: tt.userName
+									}));
+								});
+								project_task_dependency().then((data) => {
+									console.log('Project Dependencies:', data);
+									dependencies = data;
+									dependencies = dependencies.map((tt) => ({
+										value: tt.taskId,
+										name: tt.taskName
+									}));
+								});
+							}}>Create New Task</Button
+						>
 					</div>
 					<Modal bind:open={formModal} size="md" autoclose={false} class="w-full">
-						<form class="h-full rounded bg-blue-100 px-10" on:submit|preventDefault={task_creation}>
+						<form
+							class="h-full rounded bg-blue-100 px-10"
+							on:submit|preventDefault={task_creation_project}
+						>
 							<h1 class="text-center">New Task</h1>
 							<hr />
 							<div class="my-4">
@@ -619,6 +727,10 @@
 							<div class="mb-6">
 								<Label for="last_name" class="mb-2">Collaborators</Label>
 								<MultiSelect items={collaborators} bind:value={selected_collaborator} />
+							</div>
+							<div class="mb-6">
+								<Label for="last_name" class="mb-2">Dependancies</Label>
+								<MultiSelect items={dependencies} bind:value={selected_dependency} />
 							</div>
 							<div class="mb-4 grid gap-6 md:grid-cols-2">
 								<div>
@@ -759,8 +871,42 @@
 							}}>Details</Button
 						>
 
-						<Button class="w-fit" style="background-color: red" on:click={() => (formModal = true)}
-							>Create New</Button
+						<Button
+							class="w-fit"
+							style="background-color: red"
+							on:click={() => {
+								parent_task_id = proj.taskId;
+								console.log('Parent Task ID:', parent_task_id);
+								dependency_tasks_list().then((data) => {
+									console.log('working on retrieving child tasks', data);
+									console.log('Sub Tasks:', data);
+									sub_tasks = data;
+									// map data to sub tasks in value-name format
+									sub_tasks = sub_tasks.map((tt) => ({ value: tt.taskId, name: tt.taskName }));
+									lastModal = true;
+									// projectModal = false;
+									// defaultModal = true;
+								});
+
+								task_task_manager().then((data) => {
+									console.log('Task Admins:', data);
+									managers = data;
+									managers = managers.map((tt) => ({ value: tt.userId, name: tt.userName }));
+								});
+								task_task_tags().then((data) => {
+									console.log('Task Tags:', data);
+									tags = data;
+									tags = tags.map((tt) => ({ value: tt.tagId, name: tt.tagName }));
+								});
+								task_task_collaborators().then((data) => {
+									console.log('Task Collaborators:', data);
+									collaborators = data;
+									collaborators = collaborators.map((tt) => ({
+										value: tt.userId,
+										name: tt.userName
+									}));
+								});
+							}}>Create New</Button
 						>
 					</div>
 				</Card>
@@ -769,63 +915,45 @@
 	</div></Modal
 >
 
-
-
 <Modal bind:open={lastModal} size="md" autoclose={false} class="w-full">
-						<form class="h-full rounded bg-blue-100 px-10" on:submit|preventDefault={task_creation}>
-							<h1 class="text-center">New Task</h1>
-							<hr />
-							<div class="my-4">
-								<Label for="email" class="mb-2">Task Name</Label>
-								<Input
-									type="text"
-									id="name"
-									placeholder="Sample Task"
-									required
-									bind:value={task_name}
-								/>
-							</div>
-							<div class="my-6">
-								<Label
-									>Task Manager
-									<Select class="mt-2" items={managers} bind:value={selected_manager} />
-								</Label>
-							</div>
-							<div class="mb-6">
-								<Label for="last_name" class="mb-2">Tags</Label>
-								<MultiSelect items={tags} bind:value={selected_tag} />
-							</div>
-							<div class="mb-6">
-								<Label for="last_name" class="mb-2">Collaborators</Label>
-								<MultiSelect items={collaborators} bind:value={selected_collaborator} />
-							</div>
-							<div class="mb-4 grid gap-6 md:grid-cols-2">
-								<div>
-									<Label for="last_name" class="mb-2">Start Date</Label>
-									<Input
-										type="date"
-										id="last_name"
-										placeholder="Doe"
-										required
-										bind:value={start_date}
-									/>
-								</div>
-								<div>
-									<Label for="last_name" class="mb-2">Expiration Date</Label>
-									<Input
-										type="date"
-										id="last_name"
-										placeholder="Doe"
-										required
-										bind:value={deadline}
-									/>
-								</div>
-							</div>
-							<Button type="submit">Submit</Button>
-						</form>
-					</Modal>
-
-
+	<form class="h-full rounded bg-blue-100 px-10" on:submit|preventDefault={task_creation}>
+		<h1 class="text-center">New Task</h1>
+		<hr />
+		<div class="my-4">
+			<Label for="email" class="mb-2">Task Name</Label>
+			<Input type="text" id="name" placeholder="Sample Task" required bind:value={task_name} />
+		</div>
+		<div class="my-6">
+			<Label
+				>Task Manager
+				<Select class="mt-2" items={managers} bind:value={selected_manager} />
+			</Label>
+		</div>
+		<div class="mb-6">
+			<Label for="last_name" class="mb-2">Tags</Label>
+			<MultiSelect items={tags} bind:value={selected_tag} />
+		</div>
+		<div class="mb-6">
+			<Label for="last_name" class="mb-2">Collaborators</Label>
+			<MultiSelect items={collaborators} bind:value={selected_collaborator} />
+		</div>
+		<div class="mb-6">
+			<Label for="last_name" class="mb-2">Dependency</Label>
+			<MultiSelect items={sub_tasks} bind:value={selected_dependency} />
+		</div>
+		<div class="mb-4 grid gap-6 md:grid-cols-2">
+			<div>
+				<Label for="last_name" class="mb-2">Start Date</Label>
+				<Input type="date" id="last_name" placeholder="Doe" required bind:value={start_date} />
+			</div>
+			<div>
+				<Label for="last_name" class="mb-2">Expiration Date</Label>
+				<Input type="date" id="last_name" placeholder="Doe" required bind:value={deadline} />
+			</div>
+		</div>
+		<Button type="submit">Submit</Button>
+	</form>
+</Modal>
 
 <!-- 
 selected_task_id = task.taskId;

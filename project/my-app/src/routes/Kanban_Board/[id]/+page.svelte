@@ -20,7 +20,7 @@
 		UserCircleSolid,
 		PlusSolid
 	} from 'flowbite-svelte-icons';
-	import { ArrowRightFromBracketSolid ,ChartGanttSolid,ChartPieSolid} from 'svelte-awesome-icons';
+	import { ArrowRightFromBracketSolid, ChartGanttSolid, ChartPieSolid } from 'svelte-awesome-icons';
 	import NavbarModule from './NavbarModule.svelte';
 
 	let data = $page.data.data;
@@ -32,7 +32,7 @@
 	let inProgress = data.inprogress;
 	console.log(inProgress);
 	let id_for_gantt = $page.params.id;
-	console.log(id_for_gantt)
+	console.log(id_for_gantt);
 
 	async function pushProgress(t) {
 		//console.log("In update Profile");
@@ -57,7 +57,7 @@
 			} else {
 				//goto(redirecturl);
 				todo = todo.filter((obj) => obj.taskId !== t.taskId);
-				let tempObj = { id: t.id, taskName: t.taskName, deadline: t.deadline };
+				let tempObj = { taskId: t.taskId, taskName: t.taskName, deadline: t.deadline };
 				inProgress = [...inProgress, tempObj];
 			}
 		}
@@ -80,8 +80,8 @@
 			const data = await res.json();
 			console.log('pushed to completed:', data);
 			console.log(task_id);
-			inProgress = inProgress.filter((obj) => obj.taskId !== t.taskIad);
-			let tempObj = { id: t.id, taskName: t.taskName, deadline: t.deadline };
+			inProgress = inProgress.filter((obj) => obj.taskId !== t.taskId);
+			let tempObj = { taskId: t.taskId, taskName: t.taskName, deadline: t.deadline };
 			complete = [...complete, tempObj];
 		}
 	}
@@ -102,18 +102,14 @@
 </script>
 
 <NavbarModule />
-<div class="mx-20 mt-2 w-screen text-5xl font-bold grid grid-cols-2 gap-20">
-	<div class="h-32 mt-10">
-	Kanban Board
-</div>
-<div class="flex flex-row justify-center">
-	<Button class="h-14 m-auto " on:click={()=>
-		goto('/online_gantt/' + id_for_gantt ) 
-		}>
-		<ChartPieSolid class="me-7 h-5 w-5" />
-		Gantt Chart
-	</Button>
-</div>
+<div class="mx-20 mt-2 grid w-screen grid-cols-2 gap-20 text-5xl font-bold">
+	<div class="mt-10 h-32">Kanban Board</div>
+	<div class="flex flex-row justify-center">
+		<Button class="m-auto h-14 " on:click={() => goto('/online_gantt/' + id_for_gantt)}>
+			<ChartPieSolid class="me-7 h-5 w-5" />
+			Gantt Chart
+		</Button>
+	</div>
 </div>
 
 <div class="h-screen p-2">
@@ -164,12 +160,12 @@
 				{/each}
 			</div>
 
-			<div class="mt-2 flex flex-row items-center px-1 text-gray-300">
+			<!-- <div class="mt-2 flex flex-row items-center px-1 text-gray-300">
 				<Button>
 					<PlusSolid class="me-2 h-3 w-3" />
 					Add Task
 				</Button>
-			</div>
+			</div> -->
 		</div>
 
 		<!-- In Progress -->
