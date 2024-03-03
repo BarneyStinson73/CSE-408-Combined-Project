@@ -22,29 +22,7 @@
         },
         series: [
           {
-            // data: [
-            //   {
-            //     x: "Task 1",
-            //     y: [
-            //       new Date("2021-02-01").getTime(),
-            //       new Date("2021-02-10").getTime(),
-            //     ],
-            //   },
-            //   {
-            //     x: "Task 2",
-            //     y: [
-            //       new Date("2021-02-05").getTime(),
-            //       new Date("2021-02-14").getTime(),
-            //     ],
-            //   },
-            //   {
-            //     x: "Task 3",
-            //     y: [
-            //       new Date("2021-02-20").getTime(),
-            //       new Date("2021-02-28").getTime(),
-            //     ],
-            //   },
-            // ],
+            
             data: tasks.map((task) => {
               return {
                 x: task.taskName,
@@ -76,4 +54,4 @@
   });
 </script>
 
-<div bind:this={chartContainer}></div>
+<div bind:this={chartContainer} ></div>

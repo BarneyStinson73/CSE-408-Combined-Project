@@ -20,7 +20,7 @@
 		UserCircleSolid,
 		PlusSolid
 	} from 'flowbite-svelte-icons';
-	import { ArrowRightFromBracketSolid ,ChartGanttSolid} from 'svelte-awesome-icons';
+	import { ArrowRightFromBracketSolid ,ChartGanttSolid,ChartPieSolid} from 'svelte-awesome-icons';
 	import NavbarModule from './NavbarModule.svelte';
 
 	let data = $page.data.data;
@@ -103,14 +103,14 @@
 
 <NavbarModule />
 <div class="mx-20 mt-2 w-screen text-5xl font-bold grid grid-cols-2 gap-20">
-	<div>
+	<div class="h-32 mt-10">
 	Kanban Board
 </div>
 <div class="flex flex-row justify-center">
-	<Button on:click={()=>
+	<Button class="h-14 m-auto " on:click={()=>
 		goto('/online_gantt/' + id_for_gantt ) 
 		}>
-		<ChartGanttSolid class="me-5 h-5 w-5" />
+		<ChartPieSolid class="me-7 h-5 w-5" />
 		Gantt Chart
 	</Button>
 </div>
