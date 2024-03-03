@@ -40,6 +40,7 @@
 	let defaultModal = false;
 	let projectModal = false;
 	let formModal = false;
+	let lastModal = false;
 	let placement = 'right';
 	let task_name = '',
 		start_date = '',
@@ -148,11 +149,12 @@
 	let selected_tag = [];
 	let selected_collaborator = [];
 	let selected_sp_collaborator = [];
+	let selected_dependency=[];
 
 
 
 	let sub_tasks = [];
-	let task_creator = '';
+	let parent_task_id = '';
 	async function dependency_tasks_list(){
 		const res = await fetch('http://localhost:3000/manager/task_details', {
 			method: 'POST',
@@ -161,7 +163,7 @@
 				// authorization: get(token)
 				authorization: localStorage.getItem('token') || ''
 			},
-			body: JSON.stringify({ task_creator })
+			body: JSON.stringify({ parent_task_id })
 		});
 
 		if (res.ok) {
@@ -185,6 +187,7 @@
 				authorization: localStorage.getItem('token') || ''
 			},
 			body: JSON.stringify({
+				parent_task_id,
 				task_name,
 				selected_manager,
 				selected_tag,
@@ -204,6 +207,35 @@
 		}
 	}
 
+	async function task_creation_project(){
+		const res = await fetch('http://localhost:3000/manager/project/create_task', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
+			},
+			body: JSON.stringify({
+				task_name,
+				selected_manager,
+				selected_tag,
+				selected_collaborator,
+				selected_dependency,
+				start_date,
+				deadline
+			})
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			console.log('Task Creation:', data);
+			if (data.success) {
+				alert('Task Created Successfully');
+				location.reload();
+			}
+		}
+	
+	}
 	async function project_task_manager() {
 		const res = await fetch('http://localhost:3000/manager/project_admins', {
 			method: 'POST',
@@ -736,6 +768,64 @@
 		{/if}
 	</div></Modal
 >
+
+
+
+<Modal bind:open={lastModal} size="md" autoclose={false} class="w-full">
+						<form class="h-full rounded bg-blue-100 px-10" on:submit|preventDefault={task_creation}>
+							<h1 class="text-center">New Task</h1>
+							<hr />
+							<div class="my-4">
+								<Label for="email" class="mb-2">Task Name</Label>
+								<Input
+									type="text"
+									id="name"
+									placeholder="Sample Task"
+									required
+									bind:value={task_name}
+								/>
+							</div>
+							<div class="my-6">
+								<Label
+									>Task Manager
+									<Select class="mt-2" items={managers} bind:value={selected_manager} />
+								</Label>
+							</div>
+							<div class="mb-6">
+								<Label for="last_name" class="mb-2">Tags</Label>
+								<MultiSelect items={tags} bind:value={selected_tag} />
+							</div>
+							<div class="mb-6">
+								<Label for="last_name" class="mb-2">Collaborators</Label>
+								<MultiSelect items={collaborators} bind:value={selected_collaborator} />
+							</div>
+							<div class="mb-4 grid gap-6 md:grid-cols-2">
+								<div>
+									<Label for="last_name" class="mb-2">Start Date</Label>
+									<Input
+										type="date"
+										id="last_name"
+										placeholder="Doe"
+										required
+										bind:value={start_date}
+									/>
+								</div>
+								<div>
+									<Label for="last_name" class="mb-2">Expiration Date</Label>
+									<Input
+										type="date"
+										id="last_name"
+										placeholder="Doe"
+										required
+										bind:value={deadline}
+									/>
+								</div>
+							</div>
+							<Button type="submit">Submit</Button>
+						</form>
+					</Modal>
+
+
 
 <!-- 
 selected_task_id = task.taskId;

@@ -266,18 +266,6 @@ router.route("/task_creation_form_project").post(async (req, res) => {
         `SELECT "taskId" FROM "ProjectTag" WHERE "projectId" = $1`,
         [project_id]
     );
-    // .then(([task_managers,tags,parent_project_user_list]) => {
-    //     let response = {
-    //         message: "Task creation form sent successfully",
-    //         managers: task_managers ,
-    //         tags: tags,
-    //         users: parent_project_user_list
-    //     };
-    //     res.status(200).json(response);
-    // })
-    // .catch((err) => {
-    //     console.log(err);
-    // });
     let response = {
         message: "Task creation form for project sent successfully",
         managers: task_managers,
@@ -309,13 +297,14 @@ router.route("/task_creation_form_task").post(async (req, res) => {
     res.status(200).json(response);
 });
 
-router.route("/project/create_task").post(async (req, res) => {
+router.route("/project/create_task").post( async (req, res) => {
     let {
         project_id,
         task_name,
         task_manager,
         task_tags,
         task_users,
+        task_dependency,
         start_date,
         deadline,
     } = req.body;
@@ -338,6 +327,12 @@ router.route("/project/create_task").post(async (req, res) => {
         await db.any(
             `INSERT INTO "TaskTag" ("taskId","tagId") VALUES ($1, $2)`,
             [data[0].taskId, tag]
+        );
+    });
+    task_dependency.forEach(async (dependency) => {
+        await db.any(
+            `INSERT INTO "DependentTask" ("masterId","dependentId") VALUES ($1, $2)`,
+            [dependency, data[0].taskId]
         );
     });
     let response = {
@@ -535,49 +530,7 @@ router.route("/task_collaborators").post(async (req, res) => {
         console.error(err);
         res.status(500).json({ message: "Error retrieving task employees" });
     }
-}
-// router.route("/project/Gantt").post(async (req, res) => {
-//     let { task_id ,project_id} = req.body;
-//     console.log(task_id,project_id);
-
-//     // Enhanced query with JOINs and conditional filters
-//     let data = await db.any(
-//         `
-//         SELECT
-//             t1."taskId",
-//             t1."taskName",
-//             t1."progression",
-//             t1."startTime",
-//             t1."endTime",
-//             t1."deadline",
-//             t1."parentId",
-//             t1."isLeaf",
-//             dt."dependentId" AS dependency
-//         FROM "Task" t1
-//         LEFT JOIN "DependentTask" dt ON t1."taskId" = dt."masterId"
-//         INNER JOIN "ProjectTask" pt ON t1."taskId" = pt."taskId"
-//         WHERE
-//             pt."projectId" = $1 AND
-//             t1."parentId" = $2 AND
-//             t1."isLeaf" = 'FALSE' AND
-//             (
-//                 SELECT COUNT(*)
-//                 FROM "Task" t2
-//                 WHERE t2."parentId" = t1."taskId" AND t2."isLeaf" = 'TRUE'
-//             ) > 0
-//         `,
-//         [project_id, task_id]
-//     );
-//     console.log(data);
-//     console.log(data.dependency);
-
-//     let response = {
-//         message: "Gantt data retrieved successfully",
-//         data: data,
-//     };
-//     res.status(200).json(response);
-// });
-
+} );
 router.route("/project/kanban_breadcrumb").post(async (req, res) => {
     let { task_id } = req.body;
 
@@ -657,48 +610,6 @@ FROM "ProjectTask" p INNER JOIN "Task" t ON p."taskId" = t."taskId" WHERE p."pro
     }
 });
 
-// router.route("/update_project_progression").post(async (req, res) => {});
-
-// router.route("/todo_extract").post(async (req, res) => {
-//     let { task_id } = req.body;
-//     let data = await db.any(
-//         `SELECT * FROM "Task" WHERE "parentId" = $1 AND "progression" = 0`,
-//         [task_id]
-//     );
-//     let response = {
-//         message: "Todo data retrieved successfully",
-//         data: data,
-//     };
-//     res.status(200).json(response);
-// } );
-
-// router.route("/inprogress_extract").post(async (req, res) => {
-//     let { task_id } = req.body;
-//     let data = await db.any(
-//         `SELECT * FROM "Task" WHERE "parentId" = $1
-//         AND "progression" > 0
-//         AND "progression" < 100`,
-//         [task_id]
-//     );
-//     let response = {
-//         message: "Inprogress data retrieved successfully",
-//         data: data,
-//     };
-//     res.status(200).json(response);
-// } );
-
-// router.route("/completed_extract").post(async (req, res) => {
-//     let { task_id } = req.body;
-//     let data = await db.any(
-//         `SELECT * FROM "Task" WHERE "parentId" = $1 AND "progression" = 100`,
-//         [task_id]
-//     );
-//     let response = {
-//         message: "Completed data retrieved successfully",
-//         data: data,
-//     };
-//     res.status(200).json(response);
-// } );
 
 router.route("/all_leaf_tasks").post(async (req, res) => {
     let { task_id } = req.body;
@@ -755,18 +666,6 @@ router.route("/change_to_completed").post(async (req, res) => {
     res.status(200).json(response);
 });
 
-// router.route("/change_to_progress").post(async (req, res) => {
-//     let { task_id } = req.body;
-//     let data = await db.any(
-//         `UPDATE "Task" SET "progression" = 25 WHERE "taskId" = $1`,
-//         [task_id]
-//     );
-//     let response = {
-//         message: "Task pushed to in progress successfully",
-//         data: data,
-//     };
-//     res.status(200).json(response);
-// });
 
 router.route("/change_to_progress").post(async (req, res) => {
     let { task_id } = req.body;
