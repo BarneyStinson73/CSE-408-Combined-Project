@@ -149,6 +149,33 @@
 	let selected_collaborator = [];
 	let selected_sp_collaborator = [];
 
+
+
+	let sub_tasks = [];
+	let task_creator = '';
+	async function dependency_tasks_list(){
+		const res = await fetch('http://localhost:3000/manager/task_details', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
+			},
+			body: JSON.stringify({ task_creator })
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			// token.set(data.token);
+			console.log('Dependency Tasks:', data);
+			// console.log(data.success);
+			if (data.success) {
+				alert('Dependency tasks are retrieved');
+			}
+			return data.data;
+		}
+	
+	}
 	async function task_creation() {
 		const res = await fetch('http://localhost:3000/manager/create_task', {
 			method: 'POST',
@@ -199,7 +226,72 @@
 		}
 	}
 
-	async function task_task_manager() {}
+	async function task_task_manager() {
+		const res = await fetch('http://localhost:3000/manager/task_admins', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
+			},
+			body: JSON.stringify({ managers })
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			token.set(data.token);
+			console.log('Task Admins:', data);
+			// console.log(data.success);
+			if (data.success) {
+				alert('Task admins are retrieved');
+			}
+		}
+	}
+
+	async function task_task_tags(){
+		const res = await fetch('http://localhost:3000/manager/task_tags', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
+			},
+			body: JSON.stringify({ tags })
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			token.set(data.token);
+			console.log('Task Tags:', data);
+			// console.log(data.success);
+			if (data.success) {
+				alert('Task tags are retrieved');
+			}
+		}
+
+	}
+
+	async function task_task_collaborators(){
+		const res = await fetch('http://localhost:3000/manager/task_collaborators', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				// authorization: get(token)
+				authorization: localStorage.getItem('token') || ''
+			},
+			body: JSON.stringify({ collaborators })
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			token.set(data.token);
+			console.log('Task Collaborators:', data);
+			// console.log(data.success);
+			if (data.success) {
+				alert('Task collaborators are retrieved');
+			}
+		}
+	}
 
 	let selected_task_id = '';
 
@@ -274,12 +366,12 @@
 			class="imageSize"
 		/>
 	</div>
-	<div class=" mt-12">
-		<p>Name:{name}</p>
-		<p>Contact No:{contantNo}</p>
-		<p>Status: {type.charAt(0).toUpperCase() + type.slice(1)}</p>
-		<p>Email:{user_email}</p>
-		<p>Currently Available:{Currently_available ? 'Yes' : 'No'}</p>
+	<div class=" mt-8 pb-10">
+		<p class="font-bold text-lg">Name:{name}</p>
+		<p class="font-bold text-lg">Contact No:{contantNo}</p>
+		<p class="font-bold text-lg">Status: {type.charAt(0).toUpperCase() + type.slice(1)}</p>
+		<p class="font-bold text-lg">Email:{user_email}</p>
+		<p class="font-bold text-lg">Currently Available:{Currently_available ? 'Yes' : 'No'}</p>
 	</div>
 </div>
 <div class="flex flex-row">

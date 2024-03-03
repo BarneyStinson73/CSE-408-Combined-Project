@@ -469,6 +469,73 @@ router.route("/project_admins").post(async (req, res) => {
         });
 });
 
+
+router.route("/task_admins").post(async (req, res) => {
+    let { task_id } = req.body;
+
+    try {
+        const data = await db.any(
+            `SELECT "User"."userId", "User"."userName"
+       FROM "TaskEmployee"
+       INNER JOIN "User" ON "TaskEmployee"."userId" = "User"."userId"
+       WHERE "TaskEmployee"."taskId" = $1 AND "User"."type" = 'admin'`,
+            [task_id]
+        );
+
+        const response = {
+            message: "Task admins retrieved successfully",
+            data: data,
+        };
+        res.status(200).json(response);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error retrieving task admins" });
+    }
+});
+router.route("/task_tags").post(async (req, res) => {
+    let { task_id } = req.body;
+    try {
+        const data = await db.any(
+            `SELECT "Tags"."tagId", "Tags"."tagName"
+         FROM "TaskTag"
+            INNER JOIN "Tags" ON "TaskTag"."tagId" = "Tags"."tagId"
+            WHERE "TaskTag"."taskId" = $1`,
+            [task_id]
+        );
+
+        const response = {
+            message: "Task tags retrieved successfully",
+            data: data,
+        };
+        res.status(200).json(response);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error retrieving task tags" });
+    }
+});
+
+router.route("/task_collaborators").post(async (req, res) => {
+    let { task_id } = req.body;
+
+    try {
+        const data = await db.any(
+            `SELECT "User"."userId", "User"."userName"
+       FROM "TaskEmployee"
+       INNER JOIN "User" ON "TaskEmployee"."userId" = "User"."userId"
+       WHERE "TaskEmployee"."taskId" = $1`,
+            [task_id]
+        );
+
+        const response = {
+            message: "Task collaborators retrieved successfully",
+            data: data,
+        };
+        res.status(200).json(response);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error retrieving task employees" });
+    }
+}
 // router.route("/project/Gantt").post(async (req, res) => {
 //     let { task_id ,project_id} = req.body;
 //     console.log(task_id,project_id);
