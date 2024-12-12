@@ -1,5 +1,5 @@
 # Architecture
-Cikent-Server Architecture
+Client-Server Architecture
 
 # Stack
 
